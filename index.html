@@ -2,30 +2,31 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>El Varadero de Toño — Sistema de Trabajos</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --navy: #0d1b2a;
-  --navy2: #142232;
-  --navy3: #1c2f45;
-  --brass: #c9922a;
-  --brass-light: #e8b84b;
-  --brass-dim: #8a641c;
-  --rust: #b94a2c;
-  --sea: #2a6e8a;
-  --sea-light: #3a8fad;
-  --foam: #e8f4f8;
-  --white: #f4f0e8;
-  --muted: #7a8fa0;
-  --border: rgba(201,146,42,0.2);
-  --green: #2a7a4f;
-  --green-light: #3aaa6f;
+  --navy:       #0d1b2a;
+  --navy2:      #142232;
+  --navy3:      #1c2f45;
+  --brass:      #c9922a;
+  --brass-light:#e8b84b;
+  --brass-dim:  #8a641c;
+  --rust:       #b94a2c;
+  --sea:        #2a6e8a;
+  --sea-light:  #3a8fad;
+  --foam:       #eef4f7;
+  --white:      #f4f0e8;
+  --muted:      #7a8fa0;
+  --border:     rgba(201,146,42,0.18);
+  --green:      #2a7a4f;
+  --green-light:#3aaa6f;
+  --amber:      #c9762a;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
 
 body {
   font-family: 'Crimson Pro', serif;
@@ -35,1104 +36,1019 @@ body {
   overflow-x: hidden;
 }
 
-/* ── NOISE TEXTURE OVERLAY ── */
 body::before {
   content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.4;
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.35;
 }
 
-/* ── VIEW TOGGLE ── */
-.view-toggle {
-  position: fixed;
-  top: 0; left: 0; right: 0;
+/* ── TOP NAV ── */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0;
   z-index: 100;
   background: var(--navy);
   border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
+  display: flex; align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
-  height: 56px;
+  padding: 0 1.2rem;
+  height: 54px;
 }
 
-.brand-mark {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.brand-anchor {
-  font-size: 1.1rem;
-  opacity: 0.6;
-  color: var(--brass);
-}
-
+.brand { display: flex; align-items: center; gap: 0.55rem; }
+.brand-anchor { font-size: 1rem; color: var(--brass); opacity: 0.7; }
 .brand-name {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.2rem;
-  letter-spacing: 0.12em;
-  color: var(--brass-light);
-  line-height: 1;
+  font-size: 1.15rem; letter-spacing: 0.12em;
+  color: var(--brass-light); line-height: 1;
 }
-
 .brand-sub {
-  font-size: 0.6rem;
-  color: var(--muted);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-top: 1px;
+  font-size: 0.58rem; color: var(--muted);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-top: 1px; font-family: 'DM Mono', monospace;
 }
 
-.toggle-pills {
+.pills {
   display: flex;
   background: var(--navy2);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 3px;
-  gap: 2px;
+  padding: 3px; gap: 2px;
 }
-
 .pill {
-  padding: 0.3rem 0.9rem;
+  padding: 0.28rem 0.85rem;
   border-radius: 4px;
   font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
+  font-size: 0.62rem; letter-spacing: 0.08em;
   text-transform: uppercase;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  color: var(--muted);
+  cursor: pointer; border: none;
+  background: transparent; color: var(--muted);
   transition: all 0.2s;
 }
+.pill.on { background: var(--brass); color: var(--navy); font-weight: 500; }
 
-.pill.active {
-  background: var(--brass);
-  color: var(--navy);
-  font-weight: 500;
+/* ── VIEWS ── */
+.view { display: none; padding-top: 54px; min-height: 100vh; }
+.view.active { display: block; }
+
+/* slide transition */
+.slide-in {
+  animation: slideIn 0.28s cubic-bezier(0.22,1,0.36,1);
 }
-
-/* ── MAIN VIEWS ── */
-.view { display: none; padding-top: 56px; }
-.view.active { display: block; animation: fadeIn 0.3s ease; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-back {
+  animation: slideBack 0.28s cubic-bezier(0.22,1,0.36,1);
+}
+@keyframes slideBack {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ════════════════════════════════
    OWNER DASHBOARD
 ════════════════════════════════ */
-.dash-header {
-  background: linear-gradient(135deg, var(--navy2) 0%, var(--navy3) 100%);
-  padding: 2rem 1.5rem 1.5rem;
+.dash-hero {
+  background: linear-gradient(140deg, var(--navy2) 0%, var(--navy3) 100%);
+  padding: 1.8rem 1.4rem 1.4rem;
   border-bottom: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
-
-.dash-header::after {
+.dash-hero::after {
   content: '⚓';
-  position: absolute;
-  right: -10px;
-  top: 50%;
+  position: absolute; right: -12px; top: 50%;
   transform: translateY(-50%);
-  font-size: 8rem;
-  opacity: 0.04;
-  pointer-events: none;
+  font-size: 9rem; opacity: 0.04;
+  pointer-events: none; line-height: 1;
 }
-
-.dash-greeting {
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: 0.3rem;
+.dash-label {
   font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--brass);
+  margin-bottom: 0.25rem;
 }
-
 .dash-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 2rem;
-  letter-spacing: 0.08em;
-  color: var(--white);
-  line-height: 1;
+  font-size: 1.9rem; letter-spacing: 0.07em;
+  color: var(--white); line-height: 1;
 }
-
 .dash-stats {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 1.2rem;
+  display: flex; gap: 1.4rem; margin-top: 1.1rem;
 }
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.stat-num {
+.stat { display: flex; flex-direction: column; gap: 0.1rem; }
+.stat-n {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem;
-  color: var(--brass-light);
-  line-height: 1;
+  font-size: 1.7rem; color: var(--brass-light); line-height: 1;
 }
-
-.stat-label {
-  font-size: 0.65rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.stat-l {
+  font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
   font-family: 'DM Mono', monospace;
 }
+.sdiv { width: 1px; background: var(--border); align-self: stretch; }
 
-.stat-divider {
-  width: 1px;
-  background: var(--border);
-  align-self: stretch;
-}
-
-/* Job cards */
-.jobs-section {
-  padding: 1.5rem;
-  max-width: 680px;
-  margin: 0 auto;
-}
-
-.section-label {
+/* section label */
+.sec-lbl {
   font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--brass-dim);
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-size: 0.6rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--brass-dim);
+  display: flex; align-items: center; gap: 0.5rem;
+  margin: 1.2rem 0 0.7rem;
+}
+.sec-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.jobs-wrap {
+  padding: 0 1.2rem 2rem;
+  max-width: 680px; margin: 0 auto;
 }
 
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.job-card {
+/* Job card */
+.jcard {
   background: var(--navy2);
   border: 1px solid var(--border);
   border-radius: 10px;
   margin-bottom: 1rem;
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, transform 0.15s;
 }
+.jcard:active { transform: scale(0.995); }
 
-.job-card:hover { border-color: rgba(201,146,42,0.4); }
-
-.job-card-header {
-  padding: 1rem 1.2rem 0.8rem;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+.jcard-top {
+  padding: 0.9rem 1.1rem 0.75rem;
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 0.8rem;
   border-bottom: 1px solid var(--border);
 }
 
-.job-boat-name {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: 0.06em;
-  color: var(--white);
-  line-height: 1;
+.jcard-left { display: flex; align-items: flex-start; gap: 0.65rem; flex: 1; min-width: 0; }
+
+.boat-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: grid; place-items: center;
+  font-size: 1.1rem; flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.job-meta {
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-top: 0.25rem;
+.jcard-info { flex: 1; min-width: 0; }
+.boat-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem; letter-spacing: 0.05em;
+  color: var(--white); line-height: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.boat-meta {
+  font-size: 0.75rem; color: var(--muted);
+  margin-top: 0.18rem; font-style: italic;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.boat-days {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; color: var(--muted);
+  margin-top: 0.22rem; letter-spacing: 0.05em;
+}
+.boat-days.urgent { color: var(--rust); }
+
+.badge {
+  padding: 0.22rem 0.55rem;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.06em;
+  text-transform: uppercase; font-weight: 500;
+  white-space: nowrap; flex-shrink: 0;
+}
+.b-active  { background: rgba(42,122,79,0.2);  color: var(--green-light); border: 1px solid rgba(42,122,79,0.3); }
+.b-wait    { background: rgba(201,146,42,0.15); color: var(--brass-light); border: 1px solid rgba(201,146,42,0.25); }
+.b-done    { background: rgba(42,110,138,0.2);  color: var(--sea-light);   border: 1px solid rgba(42,110,138,0.3); }
+
+/* mini progress bar in card */
+.jcard-progress {
+  padding: 0.6rem 1.1rem 0;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.mini-bar-bg {
+  flex: 1; height: 4px; background: var(--navy3);
+  border-radius: 2px; overflow: hidden;
+}
+.mini-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brass-dim), var(--brass-light));
+  border-radius: 2px; transition: width 0.5s ease;
+}
+.mini-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; color: var(--brass-dim);
+  white-space: nowrap; min-width: 28px; text-align: right;
+}
+
+/* current step chip */
+.current-step-chip {
+  margin: 0.5rem 1.1rem 0;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(201,146,42,0.1);
+  border: 1px solid rgba(201,146,42,0.2);
+  border-radius: 5px; padding: 0.3rem 0.6rem;
+}
+.chip-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--brass); animation: blink 1.8s infinite;
+}
+@keyframes blink {
+  0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+.chip-text {
+  font-size: 0.78rem; color: var(--brass-light);
   font-style: italic;
 }
 
-.job-badge {
-  padding: 0.25rem 0.65rem;
-  border-radius: 4px;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 500;
-  white-space: nowrap;
-  flex-shrink: 0;
+/* step list (collapsible) */
+.steps-toggle {
+  width: 100%; padding: 0.55rem 1.1rem;
+  background: transparent; border: none;
+  color: var(--muted); font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer;
+  display: flex; align-items: center; gap: 0.4rem;
+  transition: color 0.2s;
+}
+.steps-toggle:hover { color: var(--brass-light); }
+.toggle-arrow { transition: transform 0.25s; font-size: 0.5rem; }
+.steps-toggle.open .toggle-arrow { transform: rotate(180deg); }
+
+.steps-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease;
+  border-top: 1px solid transparent;
+}
+.steps-body.open {
+  max-height: 600px;
+  border-top-color: var(--border);
 }
 
-.badge-active { background: rgba(42,110,79,0.2); color: var(--green-light); border: 1px solid rgba(42,110,79,0.3); }
-.badge-waiting { background: rgba(201,146,42,0.15); color: var(--brass-light); border: 1px solid rgba(201,146,42,0.25); }
-.badge-done { background: rgba(42,110,138,0.2); color: var(--sea-light); border: 1px solid rgba(42,110,138,0.3); }
-
-/* Step progress */
-.job-steps {
-  padding: 1rem 1.2rem;
-}
-
-.step-track {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
+.step-track { padding: 0.6rem 1.1rem; display: flex; flex-direction: column; }
 .step-row {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.45rem 0;
+  display: flex; align-items: center;
+  gap: 0.7rem; padding: 0.38rem 0;
   position: relative;
 }
-
 .step-row:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 10px;
-  top: calc(50% + 10px);
-  width: 2px;
-  height: calc(100% - 10px);
-  background: var(--border);
-  z-index: 0;
+  content: ''; position: absolute;
+  left: 10px; top: calc(50% + 10px);
+  width: 2px; height: calc(100% - 10px);
+  background: var(--border); z-index: 0;
 }
-
-.step-dot {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+.sdot {
+  width: 21px; height: 21px; border-radius: 50%;
   border: 2px solid var(--border);
   background: var(--navy);
-  display: grid;
-  place-items: center;
-  font-size: 0.65rem;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
+  display: grid; place-items: center;
+  font-size: 0.6rem; flex-shrink: 0;
+  position: relative; z-index: 1;
   transition: all 0.3s;
 }
-
-.step-dot.done {
-  background: var(--green);
-  border-color: var(--green-light);
-  color: white;
-}
-
-.step-dot.current {
-  background: var(--brass);
-  border-color: var(--brass-light);
-  color: var(--navy);
-  animation: pulse 2s infinite;
-}
-
+.sdot.done    { background: var(--green);  border-color: var(--green-light); color: #fff; }
+.sdot.current { background: var(--brass);  border-color: var(--brass-light); color: var(--navy); animation: pulse 2s infinite; }
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201,146,42,0.4); }
-  50%       { box-shadow: 0 0 0 6px rgba(201,146,42,0); }
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,146,42,0.4); }
+  50%      { box-shadow: 0 0 0 5px rgba(201,146,42,0); }
 }
+.stext { font-size: 0.85rem; color: var(--muted); flex: 1; line-height: 1.2; }
+.stext.done    { color: var(--white); }
+.stext.current { color: var(--brass-light); font-weight: 600; }
+.stime { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--muted); opacity: 0.65; }
 
-.step-text {
-  font-size: 0.88rem;
-  color: var(--muted);
-  line-height: 1.2;
-  flex: 1;
+/* actions */
+.jcard-actions {
+  padding: 0.7rem 1.1rem 0.9rem;
+  display: flex; gap: 0.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
 }
-
-.step-text.done { color: var(--white); }
-.step-text.current { color: var(--brass-light); font-weight: 600; }
-
-.step-time {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.62rem;
-  color: var(--muted);
-  opacity: 0.7;
-}
-
-/* Complete step button */
-.job-actions {
-  padding: 0 1.2rem 1rem;
-  display: flex;
-  gap: 0.6rem;
-}
-
 .btn-complete {
-  flex: 1;
-  padding: 0.7rem 1rem;
-  background: var(--brass);
-  color: var(--navy);
-  border: none;
-  border-radius: 7px;
+  flex: 1; padding: 0.65rem 0.8rem;
+  background: var(--brass); color: var(--navy);
+  border: none; border-radius: 7px;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
+  font-size: 0.95rem; letter-spacing: 0.1em;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center;
+  justify-content: center; gap: 0.35rem;
 }
-
-.btn-complete:hover { background: var(--brass-light); transform: translateY(-1px); }
+.btn-complete:hover  { background: var(--brass-light); transform: translateY(-1px); }
 .btn-complete:active { transform: translateY(0); }
+.btn-complete:disabled {
+  background: var(--navy3); color: var(--muted);
+  cursor: not-allowed; transform: none;
+}
 
-.btn-view {
-  padding: 0.7rem 1rem;
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 7px;
+.btn-client {
+  padding: 0.65rem 0.85rem;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 7px;
   font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  font-size: 0.6rem; letter-spacing: 0.07em;
+  text-transform: uppercase; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
 }
+.btn-client:hover { border-color: var(--brass-dim); color: var(--brass-light); }
 
-.btn-view:hover { border-color: var(--brass-dim); color: var(--brass-light); }
-
-/* Notification toast */
-.notif-toast {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--navy3);
-  border: 1px solid var(--green);
-  border-radius: 10px;
-  padding: 0.9rem 1.3rem;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  z-index: 200;
-  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-  min-width: 280px;
-  max-width: 90vw;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+/* parts info */
+.parts-info {
+  margin: 0 1.1rem 0.5rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(201,118,42,0.08);
+  border: 1px solid rgba(201,118,42,0.2);
+  border-radius: 6px;
+  font-size: 0.78rem; color: var(--amber);
+  display: flex; align-items: center; gap: 0.5rem;
+  font-style: italic;
 }
-
-.notif-toast.show { transform: translateX(-50%) translateY(0); }
-
-.notif-icon {
-  width: 32px;
-  height: 32px;
-  background: var(--green);
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-}
-
-.notif-text { flex: 1; }
-.notif-title {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--green-light);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 0.15rem;
-}
-.notif-body { font-size: 0.82rem; color: var(--white); line-height: 1.3; }
 
 /* ════════════════════════════════
-   CUSTOMER STATUS VIEW
+   CUSTOMER VIEW
 ════════════════════════════════ */
 #view-customer {
   background: var(--foam);
-  min-height: 100vh;
   color: var(--navy);
 }
 
-.cust-header {
+.cust-topbar {
   background: var(--navy);
-  padding: 1.8rem 1.5rem 1.5rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+  padding: 1.2rem 1.4rem 1rem;
+  position: relative; overflow: hidden;
 }
-
-.cust-header::before {
+.cust-topbar::after {
   content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 4px;
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
   background: linear-gradient(90deg, var(--brass-dim), var(--brass-light), var(--brass-dim));
 }
-
-.cust-yard-name {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 0.15em;
-  color: var(--brass-light);
+.back-btn {
+  display: flex; align-items: center; gap: 0.3rem;
+  background: none; border: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; margin-bottom: 0.8rem;
+  transition: color 0.2s; padding: 0;
 }
-
-.cust-tagline {
-  font-size: 0.75rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  margin-top: 0.2rem;
+.back-btn:hover { color: var(--brass-light); }
+.cust-yard {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem; letter-spacing: 0.14em;
+  color: var(--brass-light); line-height: 1;
+}
+.cust-sub {
+  font-size: 0.68rem; color: var(--muted);
+  letter-spacing: 0.08em; margin-top: 0.15rem;
   font-family: 'DM Mono', monospace;
 }
 
-.cust-body {
-  padding: 1.5rem;
-  max-width: 480px;
-  margin: 0 auto;
-}
+.cust-body { padding: 1.2rem 1.2rem 3rem; max-width: 480px; margin: 0 auto; }
 
-.cust-boat-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 20px rgba(13,27,42,0.1);
-  margin-bottom: 1.2rem;
+/* boat status card */
+.cboat-card {
+  background: white; border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(13,27,42,0.1);
+  overflow: hidden; margin-bottom: 1.1rem;
 }
-
-.cust-boat-header {
+.cboat-head {
   background: var(--navy2);
-  padding: 1.2rem 1.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 0.8rem;
 }
-
-.cust-boat-name {
+.cboat-left { display: flex; align-items: center; gap: 0.65rem; }
+.cboat-icon {
+  width: 38px; height: 38px; border-radius: 8px;
+  display: grid; place-items: center; font-size: 1.2rem;
+}
+.cboat-name {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4rem;
-  letter-spacing: 0.08em;
-  color: var(--white);
+  font-size: 1.3rem; letter-spacing: 0.06em;
+  color: var(--white); line-height: 1;
 }
-
-.cust-boat-detail {
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-top: 0.15rem;
-  font-style: italic;
-}
-
-.cust-status-badge {
-  background: rgba(201,146,42,0.2);
-  border: 1px solid var(--brass);
-  color: var(--brass-light);
-  padding: 0.3rem 0.7rem;
-  border-radius: 5px;
+.cboat-detail { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 0.1rem; }
+.cboat-badge {
+  padding: 0.22rem 0.6rem;
+  border-radius: 4px;
   font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  font-size: 0.58rem; letter-spacing: 0.07em;
+  text-transform: uppercase; white-space: nowrap;
 }
+.cb-active { background: rgba(201,146,42,0.2); border: 1px solid var(--brass); color: var(--brass-light); }
+.cb-done   { background: rgba(42,122,79,0.2);  border: 1px solid var(--green); color: var(--green-light); }
 
-.cust-progress-bar-wrap {
-  padding: 1rem 1.4rem 0.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.cust-progress-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: #999;
+/* progress bar */
+.cprog-wrap { padding: 0.9rem 1.2rem 0.6rem; border-bottom: 1px solid #eee; }
+.cprog-labels {
+  display: flex; justify-content: space-between;
   font-family: 'DM Mono', monospace;
-  margin-bottom: 0.5rem;
+  font-size: 0.62rem; color: #aaa; margin-bottom: 0.45rem;
 }
-
-.progress-bar-bg {
-  height: 6px;
-  background: #eee;
-  border-radius: 3px;
-  overflow: hidden;
+.cprog-labels strong { color: var(--brass); }
+.pbar-bg {
+  height: 7px; background: #e8e8e8;
+  border-radius: 4px; overflow: hidden;
 }
-
-.progress-bar-fill {
+.pbar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--brass), var(--brass-light));
-  border-radius: 3px;
-  transition: width 0.5s ease;
+  background: linear-gradient(90deg, var(--brass-dim), var(--brass-light));
+  border-radius: 4px; transition: width 0.6s ease;
 }
 
-/* Customer steps */
-.cust-steps {
-  padding: 1rem 1.4rem 1.2rem;
+/* current step callout */
+.ccurrent-callout {
+  margin: 0.7rem 1.2rem;
+  padding: 0.65rem 0.9rem;
+  background: rgba(201,146,42,0.07);
+  border-left: 3px solid var(--brass);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.85rem; color: #555;
+  font-style: italic; line-height: 1.4;
 }
+.ccurrent-callout strong { color: var(--brass); font-style: normal; }
 
-.cust-step {
-  display: flex;
-  gap: 1rem;
-  padding: 0.6rem 0;
-  align-items: flex-start;
+/* steps list */
+.csteps { padding: 0.6rem 1.2rem 1rem; }
+.cstep {
+  display: flex; gap: 0.8rem;
+  padding: 0.5rem 0; align-items: flex-start;
   position: relative;
 }
-
-.cust-step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 11px;
-  top: 28px;
-  width: 2px;
-  height: calc(100% - 10px);
-  background: #e5e5e5;
+.cstep:not(:last-child)::after {
+  content: ''; position: absolute;
+  left: 11px; top: 28px;
+  width: 2px; height: calc(100% - 10px);
+  background: #e8e8e8;
 }
-
-.cust-dot {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  font-size: 0.7rem;
-  position: relative;
-  z-index: 1;
-  margin-top: 1px;
+.cdot {
+  width: 24px; height: 24px; border-radius: 50%;
+  flex-shrink: 0; display: grid; place-items: center;
+  font-size: 0.68rem; position: relative; z-index: 1;
+  margin-top: 1px; font-weight: 500;
 }
-
-.cust-dot.done {
-  background: var(--green);
-  color: white;
+.cdot.done    { background: var(--green);  color: white; }
+.cdot.current { background: var(--brass);  color: var(--navy); animation: cpulse 2s infinite; }
+.cdot.pending { background: #eaeaea; color: #bbb; }
+@keyframes cpulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,146,42,0.3); }
+  50%      { box-shadow: 0 0 0 5px rgba(201,146,42,0); }
 }
+.cstep-info { flex: 1; }
+.cstep-name { font-size: 0.9rem; font-weight: 600; color: var(--navy); line-height: 1.2; }
+.cstep-name.pending { color: #bbb; font-weight: 400; }
+.cstep-name.current { color: var(--brass); }
+.cstep-time { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: #bbb; margin-top: 0.1rem; }
+.cstep-time.done    { color: var(--green); }
+.cstep-time.current { color: var(--brass); }
 
-.cust-dot.current {
-  background: var(--brass);
-  color: var(--navy);
-  animation: pulse-cust 2s infinite;
+/* messages */
+.cmsg-card {
+  background: white; border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(13,27,42,0.1);
+  overflow: hidden; margin-bottom: 1.1rem;
 }
-
-@keyframes pulse-cust {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201,146,42,0.35); }
-  50%       { box-shadow: 0 0 0 5px rgba(201,146,42,0); }
-}
-
-.cust-dot.pending {
-  background: #eee;
-  color: #bbb;
-}
-
-.cust-step-info { flex: 1; }
-
-.cust-step-name {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--navy);
-  line-height: 1.2;
-}
-
-.cust-step-name.pending { color: #aaa; font-weight: 400; }
-.cust-step-name.current { color: var(--brass); }
-
-.cust-step-time {
+.cmsg-head {
+  padding: 0.75rem 1.2rem;
+  border-bottom: 1px solid #f0f0f0;
   font-family: 'DM Mono', monospace;
-  font-size: 0.62rem;
-  color: #aaa;
-  margin-top: 0.15rem;
+  font-size: 0.6rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #aaa;
+  display: flex; align-items: center; gap: 0.4rem;
 }
-
-.cust-step-time.done { color: var(--green); }
-.cust-step-time.current { color: var(--brass); }
-
-/* Message history */
-.cust-messages {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 20px rgba(13,27,42,0.1);
-  margin-bottom: 1.2rem;
+.cmsg { display: flex; gap: 0.7rem; padding: 0.75rem 1.2rem; border-bottom: 1px solid #f8f8f8; align-items: flex-start; }
+.cmsg:last-child { border-bottom: none; }
+.cmsg-time { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: #ccc; white-space: nowrap; padding-top: 3px; min-width: 48px; }
+.cmsg-bubble {
+  background: #f4f4f4; border-radius: 0 8px 8px 8px;
+  padding: 0.5rem 0.75rem; font-size: 0.83rem;
+  color: var(--navy); line-height: 1.45; flex: 1;
+  border: 1px solid #ebebeb;
 }
+.cmsg-bubble.new { background: rgba(42,122,79,0.06); border-color: rgba(42,122,79,0.18); }
+.cmsg-bubble.final { background: rgba(42,110,138,0.06); border-color: rgba(42,110,138,0.2); }
 
-.cust-msg-header {
-  padding: 0.9rem 1.4rem;
-  border-bottom: 1px solid #eee;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #999;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* contact */
+.ccontact {
+  background: var(--navy2); border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 1rem;
 }
-
-.cust-msg-header::before {
-  content: '📱';
-  font-size: 0.85rem;
-}
-
-.cust-message {
-  padding: 0.9rem 1.4rem;
-  border-bottom: 1px solid #f5f5f5;
-  display: flex;
-  gap: 0.8rem;
-  align-items: flex-start;
-}
-
-.cust-message:last-child { border-bottom: none; }
-
-.msg-time {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  color: #bbb;
-  white-space: nowrap;
-  padding-top: 2px;
-  min-width: 45px;
-}
-
-.msg-bubble {
-  background: var(--foam);
-  border-radius: 0 8px 8px 8px;
-  padding: 0.5rem 0.8rem;
-  font-size: 0.85rem;
-  color: var(--navy);
-  line-height: 1.4;
-  flex: 1;
-  border: 1px solid #e8e8e8;
-}
-
-.msg-bubble.new {
-  background: rgba(42,110,79,0.06);
-  border-color: rgba(42,110,79,0.2);
-}
-
-/* Contact card */
-.cust-contact {
-  background: var(--navy2);
-  border-radius: 12px;
-  padding: 1.2rem 1.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.cust-contact-info {
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.cust-contact-name {
+.ccontact-name {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
-  color: var(--brass-light);
-  margin-bottom: 0.1rem;
+  font-size: 1.05rem; letter-spacing: 0.08em;
+  color: var(--brass-light); margin-bottom: 0.15rem;
 }
-
+.ccontact-info { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
 .btn-call {
-  padding: 0.6rem 1.2rem;
-  background: var(--brass);
-  color: var(--navy);
-  border: none;
-  border-radius: 7px;
+  padding: 0.55rem 1.1rem;
+  background: var(--brass); color: var(--navy);
+  border: none; border-radius: 7px;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.95rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  white-space: nowrap;
+  font-size: 0.92rem; letter-spacing: 0.1em;
+  cursor: pointer; white-space: nowrap;
   transition: background 0.2s;
 }
-
 .btn-call:hover { background: var(--brass-light); }
 
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 1.5rem; left: 50%;
+  transform: translateX(-50%) translateY(90px);
+  background: var(--navy3);
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  padding: 0.8rem 1.1rem;
+  display: flex; align-items: center; gap: 0.65rem;
+  z-index: 300;
+  transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1);
+  min-width: 270px; max-width: 88vw;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+.t-icon { width: 30px; height: 30px; background: var(--green); border-radius: 50%; display: grid; place-items: center; font-size: 0.85rem; flex-shrink: 0; }
+.t-title { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--green-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.12rem; }
+.t-body  { font-size: 0.8rem; color: var(--white); line-height: 1.35; }
+
 /* ── RESPONSIVE ── */
-@media (max-width: 480px) {
-  .dash-stats { gap: 1rem; }
-  .stat-num { font-size: 1.5rem; }
+@media (max-width: 420px) {
   .brand-name { font-size: 1rem; }
-  .pill { padding: 0.28rem 0.6rem; font-size: 0.6rem; }
+  .pill { padding: 0.25rem 0.6rem; font-size: 0.58rem; }
+  .dash-stats { gap: 1rem; }
+  .stat-n { font-size: 1.5rem; }
 }
 </style>
 </head>
 <body>
 
-<!-- VIEW TOGGLE -->
-<nav class="view-toggle">
-  <div class="brand-mark">
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="brand">
     <div class="brand-anchor">⚓</div>
     <div>
       <div class="brand-name">Varadero de Toño</div>
       <div class="brand-sub">Sistema de Trabajos</div>
     </div>
   </div>
-  <div class="toggle-pills">
-    <button class="pill active" onclick="showView('owner', this)">Vista Dueño</button>
-    <button class="pill" onclick="showView('customer', this)">Vista Cliente</button>
+  <div class="pills">
+    <button class="pill on" id="pill-owner" onclick="showOwner()">Vista Dueño</button>
+    <button class="pill" id="pill-client" onclick="showCustomer(currentBoat)">Vista Cliente</button>
   </div>
 </nav>
 
-<!-- ══════════════════════════════
-     OWNER DASHBOARD VIEW
-══════════════════════════════ -->
+<!-- ══════════════════ OWNER VIEW ══════════════════ -->
 <div class="view active" id="view-owner">
 
-  <div class="dash-header">
-    <div class="dash-greeting">Buenos días, Toño</div>
+  <div class="dash-hero">
+    <div class="dash-label">Buenos días, Toño</div>
     <div class="dash-title">Trabajos Activos</div>
     <div class="dash-stats">
-      <div class="stat">
-        <div class="stat-num">4</div>
-        <div class="stat-label">Botes Activos</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat">
-        <div class="stat-num">2</div>
-        <div class="stat-label">Completados Hoy</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat">
-        <div class="stat-num">1</div>
-        <div class="stat-label">Listo Para Entrega</div>
-      </div>
+      <div class="stat"><div class="stat-n" id="stat-active">3</div><div class="stat-l">En Proceso</div></div>
+      <div class="sdiv"></div>
+      <div class="stat"><div class="stat-n">1</div><div class="stat-l">Esperando Pieza</div></div>
+      <div class="sdiv"></div>
+      <div class="stat"><div class="stat-n" id="stat-done">1</div><div class="stat-l">Listo Hoy</div></div>
     </div>
   </div>
 
-  <div class="jobs-section">
-
-    <div class="section-label">En Proceso</div>
-
-    <!-- JOB 1 -->
-    <div class="job-card" id="job1">
-      <div class="job-card-header">
-        <div>
-          <div class="job-boat-name">Sea Breeze III</div>
-          <div class="job-meta">Ramón Figueroa · 38' Bayliner · Pintura completa</div>
-        </div>
-        <div class="job-badge badge-active">En Proceso</div>
-      </div>
-      <div class="job-steps">
-        <div class="step-track" id="steps-job1">
-          <div class="step-row"><div class="step-dot done">✓</div><div class="step-text done">Lijado</div><div class="step-time">8:15 AM</div></div>
-          <div class="step-row"><div class="step-dot done">✓</div><div class="step-text done">Lavado a presión</div><div class="step-time">9:40 AM</div></div>
-          <div class="step-row"><div class="step-dot done">✓</div><div class="step-text done">Sandblasting metales</div><div class="step-time">11:00 AM</div></div>
-          <div class="step-row"><div class="step-dot current">●</div><div class="step-text current">Descontaminación</div><div class="step-time">Ahora</div></div>
-          <div class="step-row"><div class="step-dot">5</div><div class="step-text">Aplicación de primer</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">6</div><div class="step-text">Pintura de acabado</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">7</div><div class="step-text">Cambio de buje / hélice</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">8</div><div class="step-text">Revisión de válvulas</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">9</div><div class="step-text">Cambio de dripless</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">10</div><div class="step-text">Brillo de fondo</div><div class="step-time">—</div></div>
-        </div>
-      </div>
-      <div class="job-actions">
-        <button class="btn-complete" onclick="completeStep('job1', 'Sea Breeze III', 'Descontaminación', 'Ramón Figueroa')">
-          ✓ &nbsp;Completar Paso Actual
-        </button>
-        <button class="btn-view" onclick="showCustomerFor('Sea Breeze III')">👁 Ver Cliente</button>
-      </div>
-    </div>
-
-    <!-- JOB 2 -->
-    <div class="job-card">
-      <div class="job-card-header">
-        <div>
-          <div class="job-boat-name">La Perla Negra</div>
-          <div class="job-meta">Carmen Rosado · 26' Mako · Tuneup + fondo</div>
-        </div>
-        <div class="job-badge badge-active">En Proceso</div>
-      </div>
-      <div class="job-steps">
-        <div class="step-track">
-          <div class="step-row"><div class="step-dot done">✓</div><div class="step-text done">Lijado</div><div class="step-time">7:30 AM</div></div>
-          <div class="step-row"><div class="step-dot current">●</div><div class="step-text current">Lavado a presión</div><div class="step-time">Ahora</div></div>
-          <div class="step-row"><div class="step-dot">3</div><div class="step-text">Aplicación de primer</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">4</div><div class="step-text">Pintura de fondo</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">5</div><div class="step-text">Revisión de motor</div><div class="step-time">—</div></div>
-        </div>
-      </div>
-      <div class="job-actions">
-        <button class="btn-complete" onclick="showToast('La Perla Negra', 'Lavado a presión', 'Carmen Rosado')">
-          ✓ &nbsp;Completar Paso Actual
-        </button>
-        <button class="btn-view" onclick="showView('customer', document.querySelectorAll('.pill')[1])">👁 Ver Cliente</button>
-      </div>
-    </div>
-
-    <!-- JOB 3 -->
-    <div class="job-card">
-      <div class="job-card-header">
-        <div>
-          <div class="job-boat-name">Don Quijote</div>
-          <div class="job-meta">Luis Morales · 42' Catalina (velero) · Pintura completa</div>
-        </div>
-        <div class="job-badge badge-waiting">Esperando Piezas</div>
-      </div>
-      <div class="job-steps">
-        <div class="step-track">
-          <div class="step-row"><div class="step-dot done">✓</div><div class="step-text done">Lijado</div><div class="step-time">Ayer 2:00 PM</div></div>
-          <div class="step-row"><div class="step-dot done">✓</div><div class="step-text done">Lavado a presión</div><div class="step-time">Ayer 4:30 PM</div></div>
-          <div class="step-row"><div class="step-dot current">●</div><div class="step-text current">En espera — buje de hélice</div><div class="step-time">Pedido ayer</div></div>
-          <div class="step-row"><div class="step-dot">4</div><div class="step-text">Sandblasting + primer</div><div class="step-time">—</div></div>
-          <div class="step-row"><div class="step-dot">5</div><div class="step-text">Pintura de acabado</div><div class="step-time">—</div></div>
-        </div>
-      </div>
-      <div class="job-actions">
-        <button class="btn-complete" style="background:var(--brass-dim); cursor: not-allowed;" disabled>
-          ⏳ &nbsp;Esperando Piezas
-        </button>
-        <button class="btn-view" onclick="showView('customer', document.querySelectorAll('.pill')[1])">👁 Ver Cliente</button>
-      </div>
-    </div>
-
-    <div class="section-label" style="margin-top: 0.5rem;">Listo Para Entrega</div>
-
-    <!-- JOB 4 -->
-    <div class="job-card">
-      <div class="job-card-header">
-        <div>
-          <div class="job-boat-name">Aventurero</div>
-          <div class="job-meta">Miguel Santos · 32' Contender · Trabajo completado</div>
-        </div>
-        <div class="job-badge badge-done">Listo ✓</div>
-      </div>
-      <div class="job-steps">
-        <div class="step-track">
-          <div class="step-row"><div class="step-dot done">✓</div><div class="step-text done">Todos los pasos completados</div><div class="step-time">Hoy 10:45 AM</div></div>
-        </div>
-      </div>
-      <div class="job-actions">
-        <button class="btn-complete" style="background: var(--sea); color: white;" onclick="showToast('Aventurero', 'Entrega', 'Miguel Santos')">
-          📱 &nbsp;Notificar Recogida
-        </button>
-      </div>
-    </div>
-
+  <div class="jobs-wrap">
+    <div class="sec-lbl">En Proceso</div>
+    <div id="active-jobs"></div>
+    <div class="sec-lbl" style="margin-top:0.3rem">Esperando Piezas</div>
+    <div id="waiting-jobs"></div>
+    <div class="sec-lbl" style="margin-top:0.3rem">Listo Para Entrega</div>
+    <div id="done-jobs"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════
-     CUSTOMER STATUS VIEW
-══════════════════════════════ -->
+<!-- ══════════════════ CUSTOMER VIEW ══════════════════ -->
 <div class="view" id="view-customer">
-
-  <div class="cust-header">
-    <div class="cust-yard-name">EL VARADERO DE TOÑO</div>
-    <div class="cust-tagline">Estado de su embarcación</div>
+  <div class="cust-topbar">
+    <button class="back-btn" onclick="showOwner(true)">← Volver al Dashboard</button>
+    <div class="cust-yard">EL VARADERO DE TOÑO</div>
+    <div class="cust-sub">Estado de su embarcación</div>
   </div>
-
-  <div class="cust-body">
-
-    <div class="cust-boat-card">
-      <div class="cust-boat-header">
-        <div>
-          <div class="cust-boat-name" id="cust-boat-display">Sea Breeze III</div>
-          <div class="cust-boat-detail">Ramón Figueroa · 38' Bayliner · Trabajo: Pintura completa</div>
-        </div>
-        <div class="cust-status-badge">En Proceso</div>
-      </div>
-
-      <div class="cust-progress-bar-wrap">
-        <div class="cust-progress-label">
-          <span>Progreso del trabajo</span>
-          <span id="cust-pct">40%</span>
-        </div>
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="cust-bar" style="width: 40%"></div>
-        </div>
-      </div>
-
-      <div class="cust-steps" id="cust-steps">
-        <div class="cust-step"><div class="cust-dot done">✓</div><div class="cust-step-info"><div class="cust-step-name">Lijado</div><div class="cust-step-time done">Completado — 8:15 AM</div></div></div>
-        <div class="cust-step"><div class="cust-dot done">✓</div><div class="cust-step-info"><div class="cust-step-name">Lavado a presión</div><div class="cust-step-time done">Completado — 9:40 AM</div></div></div>
-        <div class="cust-step"><div class="cust-dot done">✓</div><div class="cust-step-info"><div class="cust-step-name">Sandblasting de metales</div><div class="cust-step-time done">Completado — 11:00 AM</div></div></div>
-        <div class="cust-step"><div class="cust-dot current">●</div><div class="cust-step-info"><div class="cust-step-name current">Descontaminación</div><div class="cust-step-time current">En proceso ahora mismo</div></div></div>
-        <div class="cust-step"><div class="cust-dot pending">5</div><div class="cust-step-info"><div class="cust-step-name pending">Aplicación de primer</div><div class="cust-step-time">Pendiente</div></div></div>
-        <div class="cust-step"><div class="cust-dot pending">6</div><div class="cust-step-info"><div class="cust-step-name pending">Pintura de acabado y metales</div><div class="cust-step-time">Pendiente</div></div></div>
-        <div class="cust-step"><div class="cust-dot pending">7</div><div class="cust-step-info"><div class="cust-step-name pending">Cambio de buje / hélice</div><div class="cust-step-time">Pendiente</div></div></div>
-        <div class="cust-step"><div class="cust-dot pending">8</div><div class="cust-step-info"><div class="cust-step-name pending">Revisión de válvulas</div><div class="cust-step-time">Pendiente</div></div></div>
-        <div class="cust-step"><div class="cust-dot pending">9</div><div class="cust-step-info"><div class="cust-step-name pending">Cambio de dripless</div><div class="cust-step-time">Pendiente</div></div></div>
-        <div class="cust-step"><div class="cust-dot pending">10</div><div class="cust-step-info"><div class="cust-step-name pending">Brillo de fondo</div><div class="cust-step-time">Pendiente</div></div></div>
-      </div>
-    </div>
-
-    <!-- Messages -->
-    <div class="cust-messages">
-      <div class="cust-msg-header">Mensajes Recibidos</div>
-      <div class="cust-message">
-        <div class="msg-time">8:17 AM</div>
-        <div class="msg-bubble">Su bote Sea Breeze III ha comenzado el proceso de lijado. Le mantendremos informado en cada paso. 🛥️</div>
-      </div>
-      <div class="cust-message">
-        <div class="msg-time">9:42 AM</div>
-        <div class="msg-bubble">Lijado completado ✓. Su bote está pasando al lavado a presión del fondo.</div>
-      </div>
-      <div class="cust-message">
-        <div class="msg-time">11:03 AM</div>
-        <div class="msg-bubble">Lavado a presión completado ✓. Comenzamos con el sandblasting de las partes metálicas.</div>
-      </div>
-      <div class="cust-message" id="latest-msg" style="display:none">
-        <div class="msg-time" id="latest-time">—</div>
-        <div class="msg-bubble new" id="latest-text">—</div>
-      </div>
-    </div>
-
-    <!-- Contact -->
-    <div class="cust-contact">
-      <div>
-        <div class="cust-contact-name">El Varadero de Toño</div>
-        <div class="cust-contact-info">¿Preguntas? Llámenos directamente.<br>Lun–Vie · 7:00 AM – 5:00 PM</div>
-      </div>
-      <button class="btn-call">📞 Llamar</button>
-    </div>
-
-  </div>
+  <div class="cust-body" id="cust-body"></div>
 </div>
 
-<!-- NOTIFICATION TOAST -->
-<div class="notif-toast" id="toast">
-  <div class="notif-icon">📱</div>
-  <div class="notif-text">
-    <div class="notif-title">Mensaje Enviado al Cliente</div>
-    <div class="notif-body" id="toast-body">—</div>
+<!-- TOAST -->
+<div id="toast">
+  <div class="t-icon">📱</div>
+  <div>
+    <div class="t-title">Mensaje enviado al cliente</div>
+    <div class="t-body" id="t-body">—</div>
   </div>
 </div>
 
 <script>
-// ── STATE ──
-let job1Steps = [
-  { name: 'Lijado', done: true, time: '8:15 AM' },
-  { name: 'Lavado a presión', done: true, time: '9:40 AM' },
-  { name: 'Sandblasting metales', done: true, time: '11:00 AM' },
-  { name: 'Descontaminación', done: false, current: true, time: 'Ahora' },
-  { name: 'Aplicación de primer', done: false, time: '—' },
-  { name: 'Pintura de acabado', done: false, time: '—' },
-  { name: 'Cambio de buje / hélice', done: false, time: '—' },
-  { name: 'Revisión de válvulas', done: false, time: '—' },
-  { name: 'Cambio de dripless', done: false, time: '—' },
-  { name: 'Brillo de fondo', done: false, time: '—' }
+// ══════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════
+const BOATS = [
+  {
+    id: 'seabreeze',
+    name: 'Sea Breeze III',
+    icon: '🔵',
+    iconBg: 'rgba(42,110,138,0.25)',
+    owner: 'Ramón Figueroa',
+    size: "38' Bayliner",
+    job: 'Pintura completa',
+    status: 'active',
+    daysIn: 2,
+    steps: [
+      { name: 'Lijado', done: true, current: false, time: '8:15 AM' },
+      { name: 'Lavado a presión', done: true, current: false, time: '9:40 AM' },
+      { name: 'Sandblasting de metales', done: true, current: false, time: '11:05 AM' },
+      { name: 'Descontaminación', done: false, current: true, time: 'Ahora' },
+      { name: 'Aplicación de primer', done: false, current: false, time: '—' },
+      { name: 'Pintura de acabado y metales', done: false, current: false, time: '—' },
+      { name: 'Cambio de buje / hélice', done: false, current: false, time: '—' },
+      { name: 'Revisión de válvulas', done: false, current: false, time: '—' },
+      { name: 'Cambio de dripless', done: false, current: false, time: '—' },
+      { name: 'Brillo de fondo', done: false, current: false, time: '—' }
+    ],
+    messages: [
+      { time: '8:17 AM', text: 'Buenos días, Sr. Figueroa. Su bote Sea Breeze III ha comenzado el proceso de trabajo. Le estaremos informando en cada paso. ⚓', isNew: false },
+      { time: '9:42 AM', text: 'El lijado fue completado exitosamente ✓. Su embarcación está pasando ahora al lavado a presión del fondo.', isNew: false },
+      { time: '11:07 AM', text: 'Lavado a presión completado ✓. Comenzamos el sandblasting de las partes metálicas.', isNew: false },
+      { time: '12:35 PM', text: 'Sandblasting completado ✓. El equipo de descontaminación está trabajando en su bote ahora mismo.', isNew: true }
+    ]
+  },
+  {
+    id: 'perlanegra',
+    name: 'La Perla Negra',
+    icon: '⚫',
+    iconBg: 'rgba(80,60,90,0.3)',
+    owner: 'Carmen Rosado',
+    size: "26' Mako",
+    job: 'Tuneup + pintura de fondo',
+    status: 'active',
+    daysIn: 1,
+    steps: [
+      { name: 'Lijado', done: true, current: false, time: '7:30 AM' },
+      { name: 'Lavado a presión', done: false, current: true, time: 'Ahora' },
+      { name: 'Aplicación de primer', done: false, current: false, time: '—' },
+      { name: 'Pintura de fondo', done: false, current: false, time: '—' },
+      { name: 'Revisión de motor y válvulas', done: false, current: false, time: '—' },
+      { name: 'Cambio de dripless', done: false, current: false, time: '—' }
+    ],
+    messages: [
+      { time: '7:15 AM', text: 'Buenos días, Sra. Rosado. Su bote La Perla Negra fue recibido esta mañana. Comenzamos el trabajo ahora. ⚓', isNew: false },
+      { time: '7:32 AM', text: 'El proceso de lijado comenzó. Le informaremos al completar cada paso.', isNew: false },
+      { time: '9:15 AM', text: 'Lijado completado ✓. Comenzamos el lavado a presión del fondo.', isNew: true }
+    ]
+  },
+  {
+    id: 'donquijote',
+    name: 'Don Quijote',
+    icon: '⛵',
+    iconBg: 'rgba(42,90,42,0.25)',
+    owner: 'Luis Morales',
+    size: "42' Catalina (velero)",
+    job: 'Pintura completa de casco',
+    status: 'waiting',
+    daysIn: 4,
+    partsNote: 'En espera: buje de hélice — pedido hace 2 días, llegada estimada mañana',
+    steps: [
+      { name: 'Lijado', done: true, current: false, time: 'Lunes 2:00 PM' },
+      { name: 'Lavado a presión', done: true, current: false, time: 'Lunes 4:30 PM' },
+      { name: 'Sandblasting de metales', done: true, current: false, time: 'Martes 10:00 AM' },
+      { name: 'Cambio de buje / hélice', done: false, current: true, time: 'Esperando pieza' },
+      { name: 'Aplicación de primer', done: false, current: false, time: '—' },
+      { name: 'Pintura de acabado', done: false, current: false, time: '—' },
+      { name: 'Brillo de fondo', done: false, current: false, time: '—' }
+    ],
+    messages: [
+      { time: 'Lunes 8:00 AM', text: 'Buenos días, Sr. Morales. El Don Quijote fue recibido esta mañana. El trabajo comenzará de inmediato. ⚓', isNew: false },
+      { time: 'Lunes 2:02 PM', text: 'El proceso de lijado del casco fue completado ✓. Continuamos con el lavado a presión.', isNew: false },
+      { time: 'Lunes 4:32 PM', text: 'Lavado a presión completado ✓. Mañana comenzamos el sandblasting de metales.', isNew: false },
+      { time: 'Martes 10:02 AM', text: 'Sandblasting completado ✓. Identificamos que el buje de la hélice necesita reemplazo. Hemos ordenado la pieza — llegará mañana y continuamos de inmediato.', isNew: false },
+      { time: 'Martes 3:00 PM', text: 'Actualización: la pieza fue ordenada con entrega confirmada para mañana en la mañana. En cuanto llegue continuamos sin demora.', isNew: true }
+    ]
+  },
+  {
+    id: 'aventurero',
+    name: 'Aventurero',
+    icon: '🟡',
+    iconBg: 'rgba(180,140,20,0.2)',
+    owner: 'Miguel Santos',
+    size: "32' Contender",
+    job: 'Pintura completa + tuneup',
+    status: 'done',
+    daysIn: 3,
+    steps: [
+      { name: 'Lijado', done: true, current: false, time: 'Lunes 8:00 AM' },
+      { name: 'Lavado a presión', done: true, current: false, time: 'Lunes 10:30 AM' },
+      { name: 'Sandblasting de metales', done: true, current: false, time: 'Lunes 1:00 PM' },
+      { name: 'Descontaminación', done: true, current: false, time: 'Lunes 3:30 PM' },
+      { name: 'Aplicación de primer', done: true, current: false, time: 'Martes 8:00 AM' },
+      { name: 'Pintura de acabado y metales', done: true, current: false, time: 'Martes 1:00 PM' },
+      { name: 'Cambio de buje / hélice', done: true, current: false, time: 'Martes 3:00 PM' },
+      { name: 'Revisión de válvulas', done: true, current: false, time: 'Martes 4:30 PM' },
+      { name: 'Cambio de dripless', done: true, current: false, time: 'Hoy 8:30 AM' },
+      { name: 'Brillo de fondo', done: true, current: false, time: 'Hoy 10:45 AM' }
+    ],
+    messages: [
+      { time: 'Lunes 8:02 AM', text: 'Buenos días, Sr. Santos. El Aventurero fue recibido y comenzamos el trabajo. ⚓', isNew: false },
+      { time: 'Lunes 10:32 AM', text: 'Lijado completado ✓. Pasamos al lavado a presión.', isNew: false },
+      { time: 'Martes 1:02 PM', text: 'Pintura de acabado y metales completada ✓. El trabajo va excelente.', isNew: false },
+      { time: 'Hoy 10:47 AM', text: '🎉 ¡Trabajo completado! Su bote Aventurero está listo para recogida. Puede pasar hoy o mañana. Llámenos para coordinar. ¡Gracias por su confianza!', isNew: false, isFinal: true }
+    ]
+  }
 ];
 
-let custMessages = [
-  { time: '8:17 AM', text: 'Su bote Sea Breeze III ha comenzado el proceso de lijado. Le mantendremos informado en cada paso. 🛥️' },
-  { time: '9:42 AM', text: 'Lijado completado ✓. Su bote está pasando al lavado a presión del fondo.' },
-  { time: '11:03 AM', text: 'Lavado a presión completado ✓. Comenzamos con el sandblasting de las partes metálicas.' }
-];
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let currentBoat = 'seabreeze';
+let toastTimer = null;
 
-// ── VIEW SWITCH ──
-function showView(which, btn) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  document.getElementById(`view-${which}`).classList.add('active');
-  btn.classList.add('active');
+// ══════════════════════════════════════════════
+//  RENDER OWNER DASHBOARD
+// ══════════════════════════════════════════════
+function renderDashboard() {
+  const active  = BOATS.filter(b => b.status === 'active');
+  const waiting = BOATS.filter(b => b.status === 'waiting');
+  const done    = BOATS.filter(b => b.status === 'done');
+
+  document.getElementById('stat-active').textContent = active.length;
+  document.getElementById('stat-done').textContent   = done.length;
+
+  document.getElementById('active-jobs').innerHTML  = active.map(renderJobCard).join('');
+  document.getElementById('waiting-jobs').innerHTML = waiting.map(renderJobCard).join('');
+  document.getElementById('done-jobs').innerHTML    = done.map(renderJobCard).join('');
 }
 
-// ── STEP COMPLETION (Job 1 only — full demo) ──
-function completeStep(jobId, boatName, stepName, clientName) {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('es-PR', { hour: '2-digit', minute: '2-digit' });
+function renderJobCard(boat) {
+  const doneSteps = boat.steps.filter(s => s.done).length;
+  const total     = boat.steps.length;
+  const pct       = Math.round((doneSteps / total) * 100);
+  const currentStep = boat.steps.find(s => s.current);
+  const urgentClass = boat.daysIn >= 3 ? ' urgent' : '';
 
-  // Find current step index
-  const currentIdx = job1Steps.findIndex(s => s.current);
-  if (currentIdx === -1) return;
+  let badgeHtml = '';
+  if      (boat.status === 'active')  badgeHtml = `<div class="badge b-active">En Proceso</div>`;
+  else if (boat.status === 'waiting') badgeHtml = `<div class="badge b-wait">⏳ Esperando Pieza</div>`;
+  else if (boat.status === 'done')    badgeHtml = `<div class="badge b-done">Listo ✓</div>`;
 
-  // Mark done
-  job1Steps[currentIdx].done = true;
-  job1Steps[currentIdx].current = false;
-  job1Steps[currentIdx].time = timeStr;
-
-  // Set next as current
-  if (currentIdx + 1 < job1Steps.length) {
-    job1Steps[currentIdx + 1].current = true;
-    job1Steps[currentIdx + 1].time = 'Ahora';
+  let actionBtn = '';
+  if (boat.status === 'active' && currentStep) {
+    actionBtn = `<button class="btn-complete" onclick="advanceStep('${boat.id}')">✓ &nbsp;Completar: ${currentStep.name}</button>`;
+  } else if (boat.status === 'waiting') {
+    actionBtn = `<button class="btn-complete" disabled>⏳ &nbsp;Esperando Pieza</button>`;
+  } else if (boat.status === 'done') {
+    actionBtn = `<button class="btn-complete" style="background:var(--sea);color:white" onclick="sendPickupNotice('${boat.id}')">📱 &nbsp;Notificar Recogida</button>`;
   }
 
-  // Re-render job card steps
-  renderJob1Steps();
+  const partsHtml = boat.status === 'waiting'
+    ? `<div class="parts-info">📦 ${boat.partsNote}</div>`
+    : '';
 
-  // Re-render customer view
-  renderCustomerSteps();
+  const currentChip = currentStep
+    ? `<div class="current-step-chip"><div class="chip-dot"></div><div class="chip-text">Ahora: ${currentStep.name}</div></div>`
+    : (boat.status === 'done' ? `<div class="current-step-chip" style="background:rgba(42,110,138,0.1);border-color:rgba(42,110,138,0.25)"><div class="chip-dot" style="background:var(--sea-light);animation:none"></div><div class="chip-text" style="color:var(--sea-light)">Trabajo completado — listo para entrega</div></div>` : '');
 
-  // Show toast
-  const nextStep = currentIdx + 1 < job1Steps.length ? job1Steps[currentIdx + 1].name : null;
-  const msg = nextStep
-    ? `${stepName} completado ✓. Comenzamos con: ${nextStep}.`
-    : `¡Trabajo completado! Su bote está listo para recogida. 🎉`;
-
-  showToastMsg(boatName, msg, clientName, timeStr);
-
-  // Add to customer message log
-  addCustomerMessage(timeStr, msg);
+  return `
+  <div class="jcard" id="jcard-${boat.id}">
+    <div class="jcard-top">
+      <div class="jcard-left">
+        <div class="boat-icon" style="background:${boat.iconBg}">${boat.icon}</div>
+        <div class="jcard-info">
+          <div class="boat-name">${boat.name}</div>
+          <div class="boat-meta">${boat.owner} · ${boat.size} · ${boat.job}</div>
+          <div class="boat-days${urgentClass}">Día ${boat.daysIn} en el yard</div>
+        </div>
+      </div>
+      ${badgeHtml}
+    </div>
+    <div class="jcard-progress">
+      <div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${pct}%"></div></div>
+      <div class="mini-pct">${pct}%</div>
+    </div>
+    ${currentChip}
+    ${partsHtml}
+    <button class="steps-toggle" id="toggle-${boat.id}" onclick="toggleSteps('${boat.id}')">
+      <span>Ver pasos del trabajo</span>
+      <span style="flex:1"></span>
+      <span class="toggle-arrow">▼</span>
+    </button>
+    <div class="steps-body" id="sbody-${boat.id}">
+      <div class="step-track">
+        ${boat.steps.map((s, i) => {
+          let dc = '', dtxt = i+1, tc = '', tt = s.time;
+          if (s.done)    { dc='done'; dtxt='✓'; tc='done'; }
+          else if(s.current){ dc='current'; dtxt='●'; tc='current'; }
+          return `<div class="step-row"><div class="sdot ${dc}">${dtxt}</div><div class="stext ${tc}">${s.name}</div><div class="stime">${tt}</div></div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="jcard-actions">
+      ${actionBtn}
+      <button class="btn-client" onclick="openClientView('${boat.id}')">👁 Ver Cliente</button>
+    </div>
+  </div>`;
 }
 
-function renderJob1Steps() {
-  const container = document.getElementById('steps-job1');
-  container.innerHTML = job1Steps.map((s, i) => {
-    let dotClass = '', dotContent = '', textClass = '', timeVal = s.time;
-    if (s.done) { dotClass = 'done'; dotContent = '✓'; textClass = 'done'; }
-    else if (s.current) { dotClass = 'current'; dotContent = '●'; textClass = 'current'; }
-    else { dotContent = i + 1; }
-    return `<div class="step-row">
-      <div class="step-dot ${dotClass}">${dotContent}</div>
-      <div class="step-text ${textClass}">${s.name}</div>
-      <div class="step-time">${timeVal}</div>
-    </div>`;
-  }).join('');
+// ══════════════════════════════════════════════
+//  TOGGLE STEPS
+// ══════════════════════════════════════════════
+function toggleSteps(id) {
+  const body = document.getElementById(`sbody-${id}`);
+  const btn  = document.getElementById(`toggle-${id}`);
+  const open = body.classList.toggle('open');
+  btn.classList.toggle('open', open);
 }
 
-function renderCustomerSteps() {
-  const doneCount = job1Steps.filter(s => s.done).length;
-  const pct = Math.round((doneCount / job1Steps.length) * 100);
-  document.getElementById('cust-pct').textContent = pct + '%';
-  document.getElementById('cust-bar').style.width = pct + '%';
+// ══════════════════════════════════════════════
+//  ADVANCE STEP
+// ══════════════════════════════════════════════
+function advanceStep(boatId) {
+  const boat = BOATS.find(b => b.id === boatId);
+  if (!boat) return;
 
-  const container = document.getElementById('cust-steps');
-  container.innerHTML = job1Steps.map((s, i) => {
-    let dotClass = '', dotContent = '', nameClass = '', timeClass = '', timeLabel = '';
-    if (s.done) {
-      dotClass = 'done'; dotContent = '✓'; nameClass = '';
-      timeClass = 'done'; timeLabel = `Completado — ${s.time}`;
-    } else if (s.current) {
-      dotClass = 'current'; dotContent = '●'; nameClass = 'current';
-      timeClass = 'current'; timeLabel = 'En proceso ahora mismo';
-    } else {
-      dotClass = 'pending'; dotContent = i + 1; nameClass = 'pending';
-      timeClass = ''; timeLabel = 'Pendiente';
-    }
-    return `<div class="cust-step">
-      <div class="cust-dot ${dotClass}">${dotContent}</div>
-      <div class="cust-step-info">
-        <div class="cust-step-name ${nameClass}">${s.name}</div>
-        <div class="cust-step-time ${timeClass}">${timeLabel}</div>
+  const now = new Date().toLocaleTimeString('es-PR', { hour: '2-digit', minute: '2-digit' });
+  const curIdx = boat.steps.findIndex(s => s.current);
+  if (curIdx === -1) return;
+
+  const stepName = boat.steps[curIdx].name;
+  boat.steps[curIdx].done = true;
+  boat.steps[curIdx].current = false;
+  boat.steps[curIdx].time = now;
+
+  let msgText = '';
+  if (curIdx + 1 < boat.steps.length) {
+    boat.steps[curIdx + 1].current = true;
+    boat.steps[curIdx + 1].time = 'Ahora';
+    const next = boat.steps[curIdx + 1].name;
+    msgText = `${stepName} completado ✓. Continuamos con: ${next}.`;
+  } else {
+    boat.status = 'done';
+    msgText = `🎉 ¡Trabajo completado! Su bote ${boat.name} está listo para recogida. Llámenos para coordinar. ¡Gracias!`;
+    document.getElementById('stat-active').textContent =
+      parseInt(document.getElementById('stat-active').textContent) - 1;
+    document.getElementById('stat-done').textContent =
+      parseInt(document.getElementById('stat-done').textContent) + 1;
+  }
+
+  boat.messages.push({ time: now, text: msgText, isNew: true });
+
+  renderDashboard();
+  showToast(`${boat.name}: ${msgText}`);
+
+  // If currently viewing this boat's customer page, refresh it
+  if (currentBoat === boatId && document.getElementById('view-customer').classList.contains('active')) {
+    renderCustomerView(boatId);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  PICKUP NOTIFICATION
+// ══════════════════════════════════════════════
+function sendPickupNotice(boatId) {
+  const boat = BOATS.find(b => b.id === boatId);
+  const now  = new Date().toLocaleTimeString('es-PR', { hour: '2-digit', minute: '2-digit' });
+  const msg  = `Recordatorio: su bote ${boat.name} está listo para recogida cuando guste. Llámenos para coordinar. ¡Gracias!`;
+  boat.messages.push({ time: now, text: msg, isNew: true, isFinal: true });
+  showToast(`${boat.name}: ${msg}`);
+}
+
+// ══════════════════════════════════════════════
+//  RENDER CUSTOMER VIEW
+// ══════════════════════════════════════════════
+function renderCustomerView(boatId) {
+  const boat = BOATS.find(b => b.id === boatId);
+  if (!boat) return;
+
+  const doneCount = boat.steps.filter(s => s.done).length;
+  const pct       = Math.round((doneCount / boat.steps.length) * 100);
+  const curStep   = boat.steps.find(s => s.current);
+  const badgeClass = boat.status === 'done' ? 'cb-done' : 'cb-active';
+  const badgeTxt   = boat.status === 'done' ? 'Listo ✓' : 'En Proceso';
+
+  const stepsHtml = boat.steps.map((s, i) => {
+    let dc='pending', dtxt=i+1, nc='pending', tc='', tl='Pendiente';
+    if (s.done)    { dc='done'; dtxt='✓'; nc=''; tc='done'; tl=`Completado — ${s.time}`; }
+    else if(s.current){ dc='current'; dtxt='●'; nc='current'; tc='current'; tl='En proceso ahora mismo'; }
+    return `<div class="cstep">
+      <div class="cdot ${dc}">${dtxt}</div>
+      <div class="cstep-info">
+        <div class="cstep-name ${nc}">${s.name}</div>
+        <div class="cstep-time ${tc}">${tl}</div>
       </div>
     </div>`;
   }).join('');
+
+  const calloutHtml = curStep
+    ? `<div class="ccurrent-callout">Su embarcación está en este momento en el paso de <strong>${curStep.name}</strong>. Le notificaremos al completarlo.</div>`
+    : (boat.status === 'done' ? `<div class="ccurrent-callout" style="border-color:var(--green)">🎉 <strong>¡Trabajo completado!</strong> Su bote está listo para recogida.</div>` : '');
+
+  const msgsHtml = boat.messages.map(m =>
+    `<div class="cmsg">
+      <div class="cmsg-time">${m.time}</div>
+      <div class="cmsg-bubble${m.isNew ? ' new' : ''}${m.isFinal ? ' final' : ''}">${m.text}</div>
+    </div>`
+  ).join('');
+
+  document.getElementById('cust-body').innerHTML = `
+    <div class="cboat-card">
+      <div class="cboat-head">
+        <div class="cboat-left">
+          <div class="cboat-icon" style="background:${boat.iconBg}">${boat.icon}</div>
+          <div>
+            <div class="cboat-name">${boat.name}</div>
+            <div class="cboat-detail">${boat.owner} · ${boat.size} · ${boat.job}</div>
+          </div>
+        </div>
+        <div class="cboat-badge ${badgeClass}">${badgeTxt}</div>
+      </div>
+      <div class="cprog-wrap">
+        <div class="cprog-labels">
+          <span>Progreso del trabajo</span>
+          <strong>${pct}%</strong>
+        </div>
+        <div class="pbar-bg"><div class="pbar-fill" style="width:${pct}%"></div></div>
+      </div>
+      ${calloutHtml}
+      <div class="csteps">${stepsHtml}</div>
+    </div>
+    <div class="cmsg-card">
+      <div class="cmsg-head">📱 Mensajes enviados al cliente</div>
+      ${msgsHtml}
+    </div>
+    <div class="ccontact">
+      <div>
+        <div class="ccontact-name">El Varadero de Toño</div>
+        <div class="ccontact-info">¿Preguntas? Estamos disponibles.<br>Lun–Vie · 7:00 AM – 5:00 PM</div>
+      </div>
+      <button class="btn-call">📞 Llamar</button>
+    </div>
+  `;
 }
 
-function addCustomerMessage(time, text) {
-  const msgEl = document.getElementById('latest-msg');
-  document.getElementById('latest-time').textContent = time;
-  document.getElementById('latest-text').textContent = text;
-  msgEl.style.display = 'flex';
+// ══════════════════════════════════════════════
+//  VIEW SWITCHING
+// ══════════════════════════════════════════════
+function openClientView(boatId) {
+  currentBoat = boatId;
+  renderCustomerView(boatId);
+  document.getElementById('view-owner').classList.remove('active');
+  const cv = document.getElementById('view-customer');
+  cv.classList.add('active');
+  cv.classList.remove('slide-back');
+  void cv.offsetWidth;
+  cv.classList.add('slide-in');
+  document.getElementById('pill-owner').classList.remove('on');
+  document.getElementById('pill-client').classList.add('on');
+  cv.scrollTop = 0;
+  window.scrollTo(0,0);
 }
 
-// ── TOAST ──
-let toastTimer;
-function showToast(boatName, stepName, clientName) {
-  const now = new Date().toLocaleTimeString('es-PR', { hour: '2-digit', minute: '2-digit' });
-  const msg = `${stepName} completado ✓ — Mensaje enviado a ${clientName}`;
-  showToastMsg(boatName, msg, clientName, now);
+function showCustomer(boatId) {
+  currentBoat = boatId || currentBoat;
+  renderCustomerView(currentBoat);
+  document.getElementById('view-owner').classList.remove('active');
+  const cv = document.getElementById('view-customer');
+  cv.classList.add('active');
+  cv.classList.remove('slide-back');
+  void cv.offsetWidth;
+  cv.classList.add('slide-in');
+  document.getElementById('pill-owner').classList.remove('on');
+  document.getElementById('pill-client').classList.add('on');
+  window.scrollTo(0,0);
 }
 
-function showToastMsg(boatName, msg, clientName, time) {
-  document.getElementById('toast-body').textContent = `${boatName}: ${msg}`;
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
+function showOwner(back) {
+  document.getElementById('view-customer').classList.remove('active');
+  const ov = document.getElementById('view-owner');
+  ov.classList.add('active');
+  if (back) {
+    ov.classList.remove('slide-in');
+    void ov.offsetWidth;
+    ov.classList.add('slide-back');
+  }
+  document.getElementById('pill-client').classList.remove('on');
+  document.getElementById('pill-owner').classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function showToast(msg) {
+  document.getElementById('t-body').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3800);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
 }
 
-function showCustomerFor(boatName) {
-  document.getElementById('cust-boat-display').textContent = boatName;
-  showView('customer', document.querySelectorAll('.pill')[1]);
-}
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+renderDashboard();
 </script>
 </body>
 </html>
