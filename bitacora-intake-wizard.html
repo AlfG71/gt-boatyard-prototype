@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora — Nueva Orden de Trabajo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F5F2;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
+.wiz-wrap{max-width:620px;margin:0 auto}
+.brand-bar{display:flex;align-items:center;gap:12px;margin-bottom:2rem}
+.brand-bar .gold-accent{width:4px;height:36px;background:#D8A818;border-radius:2px}
+.brand-bar .brand-name{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8B0000}
+.brand-bar .brand-sub{font-size:12px;color:#888;margin-top:2px}
+.step-bar{display:flex;align-items:center;margin-bottom:2rem}
+.step-dot{display:flex;flex-direction:column;align-items:center;flex:1;gap:5px;cursor:pointer}
+.step-dot .dot{width:30px;height:30px;border-radius:50%;border:1.5px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#888;transition:all .2s}
+.step-dot.active .dot{background:#8B0000;border-color:#8B0000;color:#fff}
+.step-dot.done .dot{background:#e8f5e9;border-color:#4caf50;color:#4caf50}
+.step-dot .lbl{font-size:11px;color:#888;white-space:nowrap}
+.step-dot.active .lbl{color:#8B0000;font-weight:600}
+.step-line{flex:1;height:1.5px;background:#ddd;margin-top:-16px}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:3px}
+.card-sub{font-size:13px;color:#888;margin-bottom:1.1rem}
+.fg{display:grid;gap:11px}
+.fg2{grid-template-columns:1fr 1fr}
+.fg3{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;color:#666;font-weight:500}
+.req{color:#8B0000;margin-left:2px}
+.opt{font-size:11px;color:#aaa;margin-left:4px;font-weight:400}
+.field input,.field select,.field textarea{font-size:14px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;width:100%;transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#8B0000}
+.field textarea{height:72px;resize:vertical}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.rpill{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #ddd;border-radius:20px;cursor:pointer;font-size:13px;color:#666;transition:all .15s;user-select:none}
+.rpill input{display:none}
+.rpill.sel{border-color:#8B0000;background:#fff5f5;color:#8B0000;font-weight:600}
+.add-phone-btn{font-size:12px;color:#8B0000;background:none;border:1px solid #8B0000;border-radius:8px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:1.1rem}
+.btn-back{background:none;border:1px solid #ddd;border-radius:8px;padding:9px 20px;font-size:14px;color:#666;cursor:pointer}
+.btn-back:hover{background:#f5f5f5}
+.btn-next{background:#8B0000;border:none;border-radius:8px;padding:9px 24px;font-size:14px;color:#fff;font-weight:600;cursor:pointer}
+.btn-next:hover{background:#a00000}
+.panel{display:none}
+.panel.active{display:block}
+.section-block{border:1px solid #e8e8e8;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fafafa;cursor:pointer;user-select:none}
+.section-header:hover{background:#f5f5f5}
+.section-header-left{display:flex;align-items:center;gap:10px}
+.section-name{font-size:14px;font-weight:600;color:#1a1a1a}
+.section-count{font-size:11px;color:#888;background:#fff;border:1px solid #ddd;border-radius:10px;padding:1px 8px;transition:all .2s}
+.section-count.has-tasks{background:#fff5f5;color:#8B0000;border-color:#8B0000}
+.chevron{font-size:11px;color:#aaa;transition:transform .2s}
+.chevron.open{transform:rotate(180deg)}
+.task-list{padding:8px 14px 12px;display:none;border-top:1px solid #f0f0f0}
+.task-list.open{display:block}
+.task-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #f5f5f5}
+.task-row:last-child{border-bottom:none}
+.task-check{width:16px;height:16px;accent-color:#8B0000;cursor:pointer;flex-shrink:0}
+.task-label{font-size:13px;color:#1a1a1a;flex:1;cursor:pointer}
+.qty-wrap{display:flex;align-items:center;gap:5px;opacity:0;transition:opacity .15s;pointer-events:none}
+.qty-wrap.show{opacity:1;pointer-events:auto}
+.qty-input{width:60px;font-size:12px;padding:4px 6px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#1a1a1a}
+.qty-unit{font-size:11px;color:#888;white-space:nowrap}
+.confirm-section{margin-bottom:14px}
+.confirm-lbl{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.confirm-lbl button{font-size:11px;color:#8B0000;background:none;border:none;cursor:pointer;padding:0;font-weight:600}
+.confirm-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+.confirm-row:last-child{border-bottom:none}
+.ck{color:#888}
+.cv{color:#1a1a1a;font-weight:600;text-align:right;max-width:60%}
+.task-summary-section{margin:6px 0}
+.task-summary-title{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:3px}
+.task-summary-item{font-size:12px;color:#666;padding:2px 0 2px 12px;position:relative}
+.task-summary-item:before{content:"·";position:absolute;left:4px;color:#aaa}
+.notify-note{margin-top:12px;padding:12px 14px;background:#fafafa;border:1px solid #e8e8e8;border-radius:8px;font-size:13px;color:#666;line-height:1.5}
+.demo-banner{background:#fff8e1;border:1px solid #D8A818;border-radius:8px;padding:10px 14px;margin-bottom:1.5rem;font-size:12px;color:#7a5c00;display:flex;align-items:center;gap:8px}
+.demo-banner strong{color:#5a3e00}
+@media(max-width:500px){.fg2,.fg3{grid-template-columns:1fr}.brand-bar .brand-name{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wiz-wrap">
+
+<div class="brand-bar">
+  <div class="gold-accent"></div>
+  <div>
+    <div class="brand-name">Antonio Vecino Yacht Services</div>
+    <div class="brand-sub">Bitácora — Sistema de gestión</div>
+  </div>
+</div>
+
+<div class="demo-banner">
+  <strong>Vista previa:</strong> Este es un prototipo visual para revisión. Los datos no se guardan.
+</div>
+
+<div class="step-bar">
+  <div class="step-dot active" id="dot-1" onclick="goTo(1)"><div class="dot">1</div><span class="lbl">Cliente</span></div>
+  <div class="step-line"></div>
+  <div class="step-dot" id="dot-2" onclick="goTo(2)"><div class="dot">2</div><span class="lbl">Embarcación</span></div>
+  <div class="step-line"></div>
+  <div class="step-dot" id="dot-3" onclick="goTo(3)"><div class="dot">3</div><span class="lbl">Trabajo</span></div>
+  <div class="step-line"></div>
+  <div class="step-dot" id="dot-4" onclick="goTo(4)"><div class="dot">4</div><span class="lbl">Confirmar</span></div>
+</div>
+
+<!-- STEP 1 -->
+<div class="panel active" id="panel-1">
+  <div class="card">
+    <p class="card-title">Información del cliente</p>
+    <p class="card-sub">Datos del dueño de la embarcación</p>
+    <div class="fg fg2">
+      <div class="field"><label>Nombre completo<span class="req">*</span></label><input type="text" placeholder="Carlos Méndez" id="f-name"></div>
+      <div class="field"><label>Correo electrónico<span class="opt">opcional</span></label><input type="email" placeholder="carlos@email.com" id="f-email"></div>
+    </div>
+    <div class="fg" style="margin-top:11px">
+      <div class="field"><label>Teléfono principal<span class="req">*</span></label>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <input type="tel" placeholder="+1 (787) 555-0000" id="f-phone" style="flex:1">
+          <button class="add-phone-btn" onclick="alert('En la versión final se pueden añadir múltiples números.')">+ Añadir otro</button>
+        </div>
+      </div>
+      <div class="field"><label>Contacto de emergencia<span class="opt">opcional</span></label><input type="text" placeholder="Nombre y teléfono" id="f-emergency"></div>
+    </div>
+  </div>
+  <div class="card">
+    <p class="card-title">Preferencias de comunicación</p>
+    <p class="card-sub">Cómo notificar a este cliente</p>
+    <div class="fg">
+      <div class="field"><label>Método de contacto preferido</label>
+        <div class="radio-group">
+          <label class="rpill sel"><input type="radio" name="contact" value="whatsapp" checked>WhatsApp</label>
+          <label class="rpill"><input type="radio" name="contact" value="sms">SMS</label>
+          <label class="rpill"><input type="radio" name="contact" value="call">Llamada</label>
+          <label class="rpill"><input type="radio" name="contact" value="email">Email</label>
+        </div>
+      </div>
+      <div class="field"><label>Idioma de notificaciones</label>
+        <div class="radio-group">
+          <label class="rpill sel"><input type="radio" name="lang" value="es" checked>Español</label>
+          <label class="rpill"><input type="radio" name="lang" value="en">English</label>
+        </div>
+      </div>
+      <div class="field"><label>¿Cómo nos conoció?</label>
+        <select id="f-referral"><option value="">Seleccionar...</option><option>Referido de otro cliente</option><option>Facebook / redes sociales</option><option>Pasó por el varadero</option><option>Google / internet</option><option>Otro</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row"><span></span><button class="btn-next" onclick="goTo(2)">Siguiente →</button></div>
+</div>
+
+<!-- STEP 2 -->
+<div class="panel" id="panel-2">
+  <div class="card">
+    <p class="card-title">Datos de la embarcación</p>
+    <p class="card-sub">Información del bote que entra al varadero</p>
+    <div class="fg fg2">
+      <div class="field"><label>Nombre de la embarcación<span class="req">*</span></label><input type="text" placeholder="Sea Breeze" id="f-vname"></div>
+      <div class="field"><label>Eslora (pies)<span class="req">*</span></label><input type="number" placeholder="38" id="f-loa"></div>
+    </div>
+    <div class="fg fg3" style="margin-top:11px">
+      <div class="field"><label>Marca<span class="opt">opcional</span></label><input type="text" placeholder="Catalina" id="f-make"></div>
+      <div class="field"><label>Modelo<span class="opt">opcional</span></label><input type="text" placeholder="380" id="f-model"></div>
+      <div class="field"><label>Año<span class="opt">opcional</span></label><input type="number" placeholder="2008" id="f-year"></div>
+    </div>
+    <div class="fg fg2" style="margin-top:11px">
+      <div class="field"><label>Material del casco</label>
+        <select id="f-hull"><option value="">Seleccionar...</option><option>Fibra de vidrio</option><option>Aluminio</option><option>Acero</option><option>Madera</option><option>Ferro cemento</option><option>Otro</option></select>
+      </div>
+      <div class="field"><label>HIN (núm. de casco)<span class="opt">opcional</span></label><input type="text" placeholder="ABC12345D303" id="f-hin"></div>
+    </div>
+    <div class="field" style="margin-top:11px"><label>Última varada<span class="opt">opcional</span></label><input type="date" id="f-haul"></div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="goTo(1)">← Atrás</button><button class="btn-next" onclick="goTo(3)">Siguiente →</button></div>
+</div>
+
+<!-- STEP 3 -->
+<div class="panel" id="panel-3">
+  <div class="card">
+    <p class="card-title">Detalles generales</p>
+    <p class="card-sub">Fechas, ubicación y notas del trabajo</p>
+    <div class="fg fg2">
+      <div class="field"><label>Fecha estimada de inicio</label><input type="date" id="f-start"></div>
+      <div class="field"><label>Fecha estimada de entrega</label><input type="date" id="f-end"></div>
+    </div>
+    <div class="field" style="margin-top:11px"><label>Ubicación en el varadero<span class="opt">opcional</span></label><input type="text" placeholder="Stand 12 / Muelle B" id="f-loc"></div>
+    <div class="field" style="margin-top:11px"><label>Notas internas<span class="opt">solo el operador las ve</span></label><textarea placeholder="Instrucciones especiales, observaciones..." id="f-inotes"></textarea></div>
+    <div class="field" style="margin-top:11px"><label>Notas para el cliente<span class="opt">aparecen en su vista</span></label><textarea placeholder="Información que el cliente debe saber..." id="f-cnotes"></textarea></div>
+  </div>
+  <div class="card">
+    <p class="card-title">Tareas del trabajo</p>
+    <p class="card-sub">Selecciona las secciones y tareas a realizar</p>
+    <div id="sections-container"></div>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="goTo(2)">← Atrás</button><button class="btn-next" onclick="goTo(4)">Revisar →</button></div>
+</div>
+
+<!-- STEP 4 -->
+<div class="panel" id="panel-4">
+  <div class="card">
+    <p class="card-title">Revisar y confirmar</p>
+    <p class="card-sub">Verifica los datos antes de guardar</p>
+    <div class="confirm-section">
+      <div class="confirm-lbl">Cliente <button onclick="goTo(1)">Editar</button></div>
+      <div class="confirm-row"><span class="ck">Nombre</span><span class="cv" id="c-name">—</span></div>
+      <div class="confirm-row"><span class="ck">Teléfono</span><span class="cv" id="c-phone">—</span></div>
+      <div class="confirm-row"><span class="ck">Email</span><span class="cv" id="c-email">—</span></div>
+      <div class="confirm-row"><span class="ck">Contacto preferido</span><span class="cv" id="c-contact">WhatsApp</span></div>
+      <div class="confirm-row"><span class="ck">Idioma</span><span class="cv" id="c-lang">Español</span></div>
+    </div>
+    <div class="confirm-section" style="margin-top:12px">
+      <div class="confirm-lbl">Embarcación <button onclick="goTo(2)">Editar</button></div>
+      <div class="confirm-row"><span class="ck">Nombre</span><span class="cv" id="c-vname">—</span></div>
+      <div class="confirm-row"><span class="ck">Eslora</span><span class="cv" id="c-loa">—</span></div>
+      <div class="confirm-row"><span class="ck">Marca / Modelo</span><span class="cv" id="c-makemodel">—</span></div>
+      <div class="confirm-row"><span class="ck">Material</span><span class="cv" id="c-hull">—</span></div>
+    </div>
+    <div class="confirm-section" style="margin-top:12px">
+      <div class="confirm-lbl">Trabajo <button onclick="goTo(3)">Editar</button></div>
+      <div class="confirm-row"><span class="ck">Fechas</span><span class="cv" id="c-dates">—</span></div>
+      <div class="confirm-row"><span class="ck">Ubicación</span><span class="cv" id="c-loc">—</span></div>
+      <div id="c-tasks-summary"></div>
+    </div>
+    <div class="notify-note">Al guardar se creará el cliente, la embarcación y la orden de trabajo. El cliente recibirá una notificación automática por <strong>WhatsApp</strong> con un enlace para ver el estado de su trabajo en tiempo real.</div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-back" onclick="goTo(3)">← Atrás</button>
+    <button class="btn-next" onclick="alert('En la versión final, aquí se guardan los datos y se envía la notificación al cliente.')">Guardar y notificar</button>
+  </div>
+</div>
+
+</div>
+<script>
+const SECTIONS=[
+  {id:'s1',name:'Inspección visual',tasks:[{id:'t1a',name:'Inspección visual general',qty:false}]},
+  {id:'s2',name:'Fondo',tasks:[
+    {id:'t2a',name:'Lavar a máquina de presión',qty:false},
+    {id:'t2b',name:'Lijar a máquina',qty:false},
+    {id:'t2c',name:'Dar sandblasting',qty:false},
+    {id:'t2d',name:'Descontaminar',qty:false},
+    {id:'t2e',name:'Aplicar primer',qty:true,unit:'capas'},
+    {id:'t2f',name:'Aplicar patenta fondo',qty:true,unit:'capas'},
+    {id:'t2g',name:'Aplicar patenta metales',qty:true,unit:'capas'},
+    {id:'t2h',name:'Aplicar patenta waterline',qty:true,unit:'capas'},
+    {id:'t2i',name:'Desmontar hélice portside',qty:false},
+    {id:'t2j',name:'Desmontar hélice starboard',qty:false},
+    {id:'t2k',name:'Desmontar bushings',qty:false},
+    {id:'t2l',name:'Desmontar eje portside',qty:false},
+    {id:'t2m',name:'Desmontar eje starboard',qty:false},
+    {id:'t2n',name:'Desmontar pata de gallina portside',qty:false},
+    {id:'t2o',name:'Desmontar pata de gallina starboard',qty:false},
+    {id:'t2p',name:'Crear plantilla para pata portside',qty:false},
+    {id:'t2q',name:'Crear plantilla para pata starboard',qty:false},
+  ]},
+  {id:'s3',name:'Costados',tasks:[
+    {id:'t3a',name:'Reparar',qty:false},{id:'t3b',name:'Rectificar',qty:false},
+    {id:'t3c',name:'Lijar',qty:false},{id:'t3d',name:'Aplicar primer',qty:true,unit:'capas'},
+    {id:'t3e',name:'Pintar',qty:false},{id:'t3f',name:'Lijar con grano',qty:false},
+    {id:'t3g',name:'Pulir',qty:false},{id:'t3h',name:'Brillar',qty:false},
+    {id:'t3i',name:'Reparar scratchers',qty:true,unit:'unidades'},
+  ]},
+  {id:'s4',name:'Línea de flotación',tasks:[
+    {id:'t4a',name:'Marcar línea de flotación',qty:false},
+    {id:'t4b',name:'Retocar línea',qty:false},
+    {id:'t4c',name:'Lijar línea',qty:false},
+  ]},
+  {id:'s5',name:'Pisos / Arenas',tasks:[
+    {id:'t5a',name:'Cubierta',qty:false},{id:'t5b',name:'Popa',qty:false},{id:'t5c',name:'Proa',qty:false}
+  ]},
+  {id:'s6',name:'Popa',tasks:[]},
+  {id:'s7',name:'Proa',tasks:[]},
+  {id:'s8',name:'Cubierta',tasks:[
+    {id:'t8a',name:'Bajar dingui',qty:false},{id:'t8b',name:'Reparar',qty:false},
+    {id:'t8c',name:'Rectificar',qty:false},{id:'t8d',name:'Marcar',qty:false},
+    {id:'t8e',name:'Lijar',qty:false},{id:'t8f',name:'Pintar',qty:false},
+  ]},
+  {id:'s9',name:'Metales',tasks:[]},
+  {id:'s10',name:'Piezas de electrólisis',tasks:[]},
+  {id:'s11',name:'Alquiler',tasks:[
+    {id:'t11a',name:'Máquina articulada',qty:true,unit:'días'},
+    {id:'t11b',name:'Andamios',qty:true,unit:'días'},
+  ]},
+];
+const selected={};
+function buildSections(){
+  const c=document.getElementById('sections-container');
+  c.innerHTML='';
+  SECTIONS.forEach(sec=>{
+    selected[sec.id]=selected[sec.id]||{};
+    if(sec.tasks.length===0){
+      const b=document.createElement('div');
+      b.className='section-block';
+      b.innerHTML=`<div class="section-header"><div class="section-header-left"><span class="section-name">${sec.name}</span><span class="section-count" style="font-style:italic">Próximamente</span></div></div>`;
+      c.appendChild(b);return;
+    }
+    const b=document.createElement('div');
+    b.className='section-block';
+    b.innerHTML=`<div class="section-header" onclick="toggleSection('${sec.id}')"><div class="section-header-left"><span class="section-name">${sec.name}</span><span class="section-count" id="count-${sec.id}">0 tareas</span></div><span class="chevron" id="chev-${sec.id}">▼</span></div><div class="task-list" id="tasklist-${sec.id}">${sec.tasks.map(t=>`<div class="task-row"><input type="checkbox" class="task-check" id="chk-${t.id}" onchange="toggleTask('${sec.id}','${t.id}',this.checked)"><label class="task-label" for="chk-${t.id}">${t.name}</label>${t.qty?`<div class="qty-wrap" id="qty-${t.id}"><input type="number" class="qty-input" min="1" placeholder="0" oninput="setQty('${sec.id}','${t.id}',this.value)"><span class="qty-unit">${t.unit}</span></div>`:''}</div>`).join('')}</div>`;
+    c.appendChild(b);
+  });
+}
+function toggleSection(sid){
+  document.getElementById('tasklist-'+sid).classList.toggle('open');
+  document.getElementById('chev-'+sid).classList.toggle('open');
+}
+function toggleTask(sid,tid,checked){
+  if(checked){selected[sid][tid]=selected[sid][tid]||{qty:null};}
+  else{delete selected[sid][tid];}
+  const qw=document.getElementById('qty-'+tid);
+  if(qw)qw.classList.toggle('show',checked);
+  updateCount(sid);
+}
+function setQty(sid,tid,v){if(selected[sid][tid])selected[sid][tid].qty=v;}
+function updateCount(sid){
+  const n=Object.keys(selected[sid]).length;
+  const el=document.getElementById('count-'+sid);
+  el.textContent=n===0?'0 tareas':n+(n===1?' tarea':' tareas');
+  el.className='section-count'+(n>0?' has-tasks':'');
+}
+let current=1;
+function goTo(n){
+  document.getElementById('panel-'+current).classList.remove('active');
+  document.getElementById('dot-'+current).classList.remove('active');
+  current=n;
+  document.getElementById('panel-'+n).classList.add('active');
+  for(let i=1;i<=4;i++){
+    const d=document.getElementById('dot-'+i);
+    d.classList.remove('active','done');
+    if(i<n)d.classList.add('done');
+  }
+  document.getElementById('dot-'+n).classList.add('active');
+  if(n===4)populateConfirm();
+  window.scrollTo(0,0);
+}
+function val(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function populateConfirm(){
+  document.getElementById('c-name').textContent=val('f-name')||'—';
+  document.getElementById('c-phone').textContent=val('f-phone')||'—';
+  document.getElementById('c-email').textContent=val('f-email')||'—';
+  document.getElementById('c-vname').textContent=val('f-vname')||'—';
+  document.getElementById('c-loa').textContent=val('f-loa')?val('f-loa')+' pies':'—';
+  const mm=[val('f-make'),val('f-model')].filter(Boolean).join(' ');
+  document.getElementById('c-makemodel').textContent=mm||'—';
+  document.getElementById('c-hull').textContent=val('f-hull')||'—';
+  const s=val('f-start'),e=val('f-end');
+  document.getElementById('c-dates').textContent=s&&e?s+' → '+e:s||e||'—';
+  document.getElementById('c-loc').textContent=val('f-loc')||'—';
+  const contact=document.querySelector('input[name="contact"]:checked');
+  const lang=document.querySelector('input[name="lang"]:checked');
+  document.getElementById('c-contact').textContent=contact?contact.value:'—';
+  document.getElementById('c-lang').textContent=lang&&lang.value==='en'?'English':'Español';
+  const summary=document.getElementById('c-tasks-summary');
+  let html='';let total=0;
+  SECTIONS.forEach(sec=>{
+    const tasks=Object.keys(selected[sec.id]||{});
+    if(!tasks.length)return;
+    html+=`<div class="task-summary-section"><div class="task-summary-title">${sec.name}</div>`;
+    tasks.forEach(tid=>{
+      const task=sec.tasks.find(t=>t.id===tid);if(!task)return;total++;
+      const qdata=selected[sec.id][tid];
+      const qstr=qdata&&qdata.qty?` — ${qdata.qty} ${task.unit||''}` :'';
+      html+=`<div class="task-summary-item">${task.name}${qstr}</div>`;
+    });
+    html+='</div>';
+  });
+  summary.innerHTML=total===0?'<div class="confirm-row"><span class="ck">Tareas</span><span class="cv">Ninguna seleccionada</span></div>':html;
+}
+document.querySelectorAll('.rpill').forEach(pill=>{
+  pill.addEventListener('click',function(){
+    const name=this.querySelector('input').getAttribute('name');
+    document.querySelectorAll(`.rpill input[name="${name}"]`).forEach(r=>r.closest('.rpill').classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+buildSections();
+</script>
+</body>
+</html>
