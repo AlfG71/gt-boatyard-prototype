@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Bitácora — Intake Wizard · AVYS</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 48px;
+    }
+    :root {
+      --navy: #003060;
+      --crimson: #C01818;
+      --gold: #D8A818;
+      --gold-lt: #F0C840;
+      --navy-lt: #1a4a7a;
+      --bg: #ffffff;
+      --bg2: #f8f8f8;
+      --border: rgba(0,0,0,0.1);
+      --text: #111;
+      --muted: #666;
+      --hint: #aaa;
+    }
+    #wiz {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+    }
+    .wiz-header {
+      background: var(--navy);
+      padding: 14px 16px 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .wiz-logo-circle {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(216,168,24,0.2);
+      border: 1.5px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .wiz-logo-circle span { font-size: 14px; color: var(--gold); font-weight: 500; font-family: 'DM Mono', monospace; }
+    .wiz-header-text { flex: 1; }
+    .wiz-brand { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: #fff; letter-spacing: 0.1em; }
+    .wiz-sub { font-size: 10px; color: rgba(216,168,24,0.7); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1px; font-family: 'DM Mono', monospace; }
+    .lang-toggle {
+      display: flex; border: 0.5px solid rgba(255,255,255,0.2);
+      border-radius: 6px; overflow: hidden;
+    }
+    .lang-btn {
+      padding: 4px 12px; font-size: 10px;
+      font-family: 'DM Mono', monospace; letter-spacing: 0.06em;
+      cursor: pointer; border: none; background: transparent; color: rgba(255,255,255,0.4);
+    }
+    .lang-btn.on { background: rgba(216,168,24,0.25); color: var(--gold); }
+    .wiz-steps {
+      background: var(--navy);
+      padding: 0 16px 14px;
+      display: flex; align-items: center;
+    }
+    .wstep { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
+    .wstep:not(:last-child)::after {
+      content: ''; position: absolute; top: 12px; left: 55%; right: -55%;
+      height: 1.5px; background: rgba(255,255,255,0.15); z-index: 0;
+    }
+    .wstep.done:not(:last-child)::after { background: var(--gold); opacity: 0.6; }
+    .wstep-dot {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: rgba(255,255,255,0.3);
+      position: relative; z-index: 1;
+      font-family: 'DM Mono', monospace;
+    }
+    .wstep.done .wstep-dot { background: rgba(216,168,24,0.2); border-color: var(--gold); color: var(--gold); }
+    .wstep.active .wstep-dot { background: var(--crimson); border-color: var(--crimson); color: #fff; font-weight: 500; }
+    .wstep-lbl { font-size: 9px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; text-align: center; font-family: 'DM Mono', monospace; }
+    .wstep.active .wstep-lbl { color: rgba(255,255,255,0.8); }
+    .wstep.done .wstep-lbl { color: rgba(216,168,24,0.6); }
+    .wiz-body { background: var(--bg); padding: 20px 16px 16px; min-height: 400px; display: flex; flex-direction: column; }
+    .gold-bar { height: 2px; background: linear-gradient(90deg, var(--crimson), var(--gold), transparent); border-radius: 1px; margin-bottom: 16px; transition: width 0.4s ease; }
+    .step-panel { display: none; flex-direction: column; flex: 1; }
+    .step-panel.active { display: flex; }
+    .step-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .step-desc { font-size: 12px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; font-family: 'DM Mono', monospace; }
+    .field label .req { color: var(--crimson); margin-left: 2px; }
+    .field input, .field select, .field textarea {
+      width: 100%; font-size: 14px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 12px; background: var(--bg); color: var(--text);
+      font-family: inherit; appearance: none; -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none; border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(0,48,96,0.08);
+    }
+    .field .hint { font-size: 11px; color: var(--hint); margin-top: 4px; font-style: italic; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .channel-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ch-opt { border: 1px solid var(--border); border-radius: 8px; padding: 10px; cursor: pointer; transition: border-color 0.15s; display: flex; flex-direction: column; gap: 3px; }
+    .ch-opt.selected { border: 2px solid var(--navy); background: rgba(0,48,96,0.04); }
+    .ch-opt-icon { font-size: 16px; }
+    .ch-opt-name { font-size: 12px; font-weight: 600; color: var(--text); }
+    .ch-opt-desc { font-size: 10px; color: var(--hint); }
+    .task-section { margin-bottom: 14px; }
+    .task-sec-head { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'DM Mono', monospace; padding: 6px 0; border-bottom: 1px solid var(--border); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+    .task-count { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1px 7px; font-size: 10px; color: var(--muted); }
+    .task-item { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-bottom: 1px solid #f5f5f5; }
+    .task-item:last-child { border-bottom: none; }
+    .task-cb { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #ddd; background: #fff; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .task-cb.checked { background: var(--navy); border-color: var(--navy); }
+    .task-cb.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 600; }
+    .task-name { font-size: 13px; color: var(--text); flex: 1; }
+    .task-opt { font-size: 10px; color: var(--hint); font-style: italic; }
+    .confirm-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+    .confirm-section-lbl { font-size: 9px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'DM Mono', monospace; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .confirm-section-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .confirm-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+    .confirm-key { color: var(--muted); }
+    .confirm-val { color: var(--text); font-weight: 600; text-align: right; }
+    .task-summary { font-size: 12px; color: var(--muted); background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; line-height: 1.5; }
+    .task-summary strong { color: var(--text); }
+    .wiz-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+    .btn-back { font-size: 13px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 10px 0; display: flex; align-items: center; gap: 4px; font-family: inherit; }
+    .btn-back:hover { color: var(--text); }
+    .btn-next { background: var(--navy); color: #fff; border: none; border-radius: 8px; padding: 11px 22px; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.03em; transition: background 0.15s; font-family: inherit; }
+    .btn-next:hover { background: var(--navy-lt); }
+    .btn-next.submit { background: var(--crimson); }
+    .btn-next.submit:hover { background: #a01010; }
+    .demo-notice { text-align: center; font-size: 10px; color: var(--hint); font-family: 'DM Mono', monospace; letter-spacing: 0.06em; padding: 12px 0 0; }
+  </style>
+</head>
+<body>
+<div id="wiz">
+  <div class="wiz-header">
+    <div class="wiz-logo-circle"><span>B</span></div>
+    <div class="wiz-header-text">
+      <div class="wiz-brand">Bitácora</div>
+      <div class="wiz-sub">Antonio Vecino Yacht Services</div>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn on" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+
+  <div class="wiz-steps">
+    <div class="wstep done" id="ws1"><div class="wstep-dot">✓</div><div class="wstep-lbl" id="lbl1">Cliente</div></div>
+    <div class="wstep active" id="ws2"><div class="wstep-dot">2</div><div class="wstep-lbl" id="lbl2">Embarcación</div></div>
+    <div class="wstep" id="ws3"><div class="wstep-dot">3</div><div class="wstep-lbl" id="lbl3">Trabajo</div></div>
+    <div class="wstep" id="ws4"><div class="wstep-dot">4</div><div class="wstep-lbl" id="lbl4">Confirmar</div></div>
+  </div>
+
+  <div class="wiz-body">
+    <div class="gold-bar" id="prog-bar" style="width:25%"></div>
+
+    <!-- STEP 1 -->
+    <div class="step-panel" id="step1">
+      <div class="step-title" id="t1">Información del cliente</div>
+      <div class="step-desc" id="d1">Nombre, contacto, y preferencias de comunicación.</div>
+      <div class="field">
+        <label>Nombre completo <span class="req">*</span></label>
+        <input type="text" placeholder="Ej. Carlos Martínez" />
+      </div>
+      <div class="field">
+        <label>Teléfono principal <span class="req">*</span></label>
+        <input type="tel" placeholder="+1 (787) 555-0000" />
+      </div>
+      <div class="field">
+        <label>Correo electrónico</label>
+        <input type="email" placeholder="carlos@correo.com" />
+        <div class="hint">Opcional — no todos los clientes usan correo</div>
+      </div>
+      <div class="field">
+        <label>Canal preferido <span class="req">*</span></label>
+        <div class="channel-opts">
+          <div class="ch-opt selected" onclick="selCh(this)"><div class="ch-opt-icon">💬</div><div class="ch-opt-name">WhatsApp</div><div class="ch-opt-desc">Recomendado</div></div>
+          <div class="ch-opt" onclick="selCh(this)"><div class="ch-opt-icon">📱</div><div class="ch-opt-name">SMS</div><div class="ch-opt-desc">Fallback</div></div>
+          <div class="ch-opt" onclick="selCh(this)"><div class="ch-opt-icon">📧</div><div class="ch-opt-name">Email</div><div class="ch-opt-desc">Opcional</div></div>
+          <div class="ch-opt" onclick="selCh(this)"><div class="ch-opt-icon">📞</div><div class="ch-opt-name">Llamada</div><div class="ch-opt-desc">Solo llamadas</div></div>
+        </div>
+      </div>
+      <div class="wiz-footer">
+        <span></span>
+        <button class="btn-next" onclick="goStep(2)" id="next1">Embarcación →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-panel active" id="step2">
+      <div class="step-title" id="t2">Datos de la embarcación</div>
+      <div class="step-desc" id="d2">Información del bote que entra al varadero.</div>
+      <div class="field">
+        <label>Nombre del bote <span class="req">*</span></label>
+        <input type="text" placeholder="Ej. La Sirena" />
+      </div>
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0"><label>Marca</label><input type="text" placeholder="Grady-White" /></div>
+        <div class="field" style="margin-bottom:0"><label>Año</label><input type="number" placeholder="2018" min="1900" max="2026" /></div>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label>Material del casco</label>
+        <select><option>Fibra de vidrio</option><option>Aluminio</option><option>Madera</option><option>Acero</option><option>Otro</option></select>
+      </div>
+      <div class="field">
+        <label>HIN (Hull ID)</label>
+        <input type="text" placeholder="USCG-00000000" />
+        <div class="hint">Formato: ABC-XXXXX-YY-ZZ</div>
+      </div>
+      <div class="wiz-footer">
+        <button class="btn-back" onclick="goStep(1)">← Atrás</button>
+        <button class="btn-next" onclick="goStep(3)">Trabajo →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-panel" id="step3">
+      <div class="step-title" id="t3">Tipo de trabajo</div>
+      <div class="step-desc" id="d3">Selecciona las tareas para este trabajo.</div>
+      <div class="task-section">
+        <div class="task-sec-head">Casco <span class="task-count">3</span></div>
+        <div class="task-item"><div class="task-cb checked" onclick="togTask(this)"></div><div class="task-name">Varada y puesta en seco</div></div>
+        <div class="task-item"><div class="task-cb checked" onclick="togTask(this)"></div><div class="task-name">Limpieza de fondo</div></div>
+        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Pintura de fondo <span class="task-opt">+ capas</span></div></div>
+      </div>
+      <div class="task-section">
+        <div class="task-sec-head">Motor <span class="task-count">2</span></div>
+        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Inspección de motor</div></div>
+        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Cambio de aceite e impela</div></div>
+      </div>
+      <div class="task-section">
+        <div class="task-sec-head">Cubierta <span class="task-count">2</span></div>
+        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Pulido y encerado</div></div>
+        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Revisión de hardware</div></div>
+      </div>
+      <div class="field" style="margin-top:6px">
+        <label>Notas internas</label>
+        <textarea rows="2" placeholder="Instrucciones especiales para el equipo..."></textarea>
+      </div>
+      <div class="wiz-footer">
+        <button class="btn-back" onclick="goStep(2)">← Atrás</button>
+        <button class="btn-next" onclick="goStep(4)">Revisar →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-panel" id="step4">
+      <div class="step-title" id="t4">Confirmar orden de trabajo</div>
+      <div class="step-desc" id="d4">Revisa todo antes de crear el trabajo.</div>
+      <div class="confirm-card">
+        <div class="confirm-section-lbl">Cliente</div>
+        <div class="confirm-row"><span class="confirm-key">Nombre</span><span class="confirm-val">Carlos Martínez</span></div>
+        <div class="confirm-row"><span class="confirm-key">Teléfono</span><span class="confirm-val">+1 (787) 555-0192</span></div>
+        <div class="confirm-row"><span class="confirm-key">Canal</span><span class="confirm-val">WhatsApp</span></div>
+      </div>
+      <div class="confirm-card">
+        <div class="confirm-section-lbl">Embarcación</div>
+        <div class="confirm-row"><span class="confirm-key">Nombre</span><span class="confirm-val">La Sirena</span></div>
+        <div class="confirm-row"><span class="confirm-key">Marca</span><span class="confirm-val">Grady-White 2018</span></div>
+        <div class="confirm-row"><span class="confirm-key">Casco</span><span class="confirm-val">Fibra de vidrio</span></div>
+      </div>
+      <div class="task-summary"><strong>2 tareas seleccionadas:</strong> Varada y puesta en seco, Limpieza de fondo</div>
+      <div class="wiz-footer">
+        <button class="btn-back" onclick="goStep(3)">← Atrás</button>
+        <button class="btn-next submit">Crear trabajo ✓</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="demo-notice">PROTOTIPO · Solo fines demostrativos · AVYS Bitácora</div>
+</div>
+
+<script>
+let cur = 2;
+const labels = {
+  es: ['Cliente','Embarcación','Trabajo','Confirmar'],
+  en: ['Client','Vessel','Work','Confirm']
+};
+const titles = {
+  es: ['Información del cliente','Datos de la embarcación','Tipo de trabajo','Confirmar orden de trabajo'],
+  en: ['Client information','Vessel details','Work order','Confirm order']
+};
+const descs = {
+  es: ['Nombre, contacto, y preferencias de comunicación.','Información del bote que entra al varadero.','Selecciona las tareas para este trabajo.','Revisa todo antes de crear el trabajo.'],
+  en: ['Name, contact, and communication preferences.','Details of the vessel entering the yard.','Select the tasks for this job.','Review everything before creating the work order.']
+};
+let lang = 'es';
+
+function goStep(n) {
+  document.getElementById('step'+cur).classList.remove('active');
+  ['ws1','ws2','ws3','ws4'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.className = 'wstep';
+    if (i+1 < n) { el.classList.add('done'); el.querySelector('.wstep-dot').textContent = '✓'; }
+    else if (i+1 === n) { el.classList.add('active'); el.querySelector('.wstep-dot').textContent = String(i+1); }
+    else { el.querySelector('.wstep-dot').textContent = String(i+1); }
+  });
+  cur = n;
+  document.getElementById('step'+n).classList.add('active');
+  document.getElementById('prog-bar').style.width = ['25%','50%','75%','100%'][n-1];
+  window.scrollTo(0,0);
+}
+
+function selCh(el) {
+  el.closest('.channel-opts').querySelectorAll('.ch-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function togTask(el) { el.classList.toggle('checked'); }
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('on', b.textContent === l.toUpperCase()));
+  labels[l].forEach((lbl,i) => { document.getElementById('lbl'+(i+1)).textContent = lbl; });
+  titles[l].forEach((t,i) => { document.getElementById('t'+(i+1)).textContent = t; });
+  descs[l].forEach((d,i) => { document.getElementById('d'+(i+1)).textContent = d; });
+}
+</script>
+</body>
+</html>
