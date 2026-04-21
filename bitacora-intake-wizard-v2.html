@@ -125,6 +125,18 @@
     .task-cb.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 600; }
     .task-name { font-size: 13px; color: var(--text); flex: 1; }
     .task-opt { font-size: 10px; color: var(--hint); font-style: italic; }
+    .acc-block { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+    .acc-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: var(--bg2); cursor: pointer; user-select: none; }
+    .acc-header:hover { background: var(--bg3); }
+    .acc-name { font-size: 12px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
+    .acc-count { font-size: 10px; color: var(--muted); background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 1px 7px; }
+    .acc-count.has-tasks { background: rgba(27,42,74,0.08); color: var(--navy); border-color: var(--navy); }
+    .acc-chev { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
+    .acc-chev.open { transform: rotate(180deg); }
+    .acc-list { display: none; border-top: 1px solid var(--border); padding: 4px 12px 8px; }
+    .acc-list.open { display: block; }
+    .acc-row { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f5f5f5; }
+    .acc-row:last-child { border-bottom: none; }
     .confirm-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
     .confirm-section-lbl { font-size: 9px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-family: 'DM Mono', monospace; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
     .confirm-section-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -244,25 +256,18 @@
     <div class="step-panel" id="step3">
       <div class="step-title" id="t3">Tipo de trabajo</div>
       <div class="step-desc" id="d3">Selecciona las tareas para este trabajo.</div>
-      <div class="task-section">
-        <div class="task-sec-head">Casco <span class="task-count">3</span></div>
-        <div class="task-item"><div class="task-cb checked" onclick="togTask(this)"></div><div class="task-name">Varada y puesta en seco</div></div>
-        <div class="task-item"><div class="task-cb checked" onclick="togTask(this)"></div><div class="task-name">Limpieza de fondo</div></div>
-        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Pintura de fondo <span class="task-opt">+ capas</span></div></div>
+      <div class="field">
+        <label>Fecha de varada <span class="req">*</span></label>
+        <input type="date" id="f-varada" />
       </div>
-      <div class="task-section">
-        <div class="task-sec-head">Motor <span class="task-count">2</span></div>
-        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Inspección de motor</div></div>
-        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Cambio de aceite e impela</div></div>
+      <div class="field" id="entrega-field" style="display:none">
+        <label>Fecha de entrega estimada</label>
+        <input type="date" id="f-entrega" />
       </div>
-      <div class="task-section">
-        <div class="task-sec-head">Cubierta <span class="task-count">2</span></div>
-        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Pulido y encerado</div></div>
-        <div class="task-item"><div class="task-cb" onclick="togTask(this)"></div><div class="task-name">Revisión de hardware</div></div>
-      </div>
+      <div id="sections-container-v2"></div>
       <div class="field" style="margin-top:6px">
-        <label>Notas internas</label>
-        <textarea rows="2" placeholder="Instrucciones especiales para el equipo..."></textarea>
+        <label>Notas del cliente</label>
+        <textarea rows="2" placeholder="Observaciones o instrucciones del cliente"></textarea>
       </div>
       <div class="wiz-footer">
         <button class="btn-back" onclick="goStep(2)">← Atrás</button>
@@ -334,6 +339,87 @@ function selCh(el) {
 }
 
 function togTask(el) { el.classList.toggle('checked'); }
+
+// Owner-only field — toggle isOwner to true to reveal
+const isOwner = false;
+
+const SECTIONS = [
+  {id:'s1',name:'Inspección visual',tasks:[{id:'t1a',name:'Inspección visual general',qty:false}]},
+  {id:'s2',name:'Fondo',tasks:[
+    {id:'t2a',name:'Lavar a máquina de presión',qty:false},
+    {id:'t2b',name:'Lijar a máquina',qty:false},
+    {id:'t2c',name:'Dar sandblasting',qty:false},
+    {id:'t2d',name:'Descontaminar',qty:false},
+    {id:'t2e',name:'Aplicar primer',qty:true,unit:'capas'},
+    {id:'t2f',name:'Aplicar patenta fondo',qty:true,unit:'capas'},
+    {id:'t2g',name:'Aplicar patenta metales',qty:true,unit:'capas'},
+    {id:'t2h',name:'Aplicar patenta waterline',qty:true,unit:'capas'},
+    {id:'t2i',name:'Desmontar hélice portside',qty:false},
+    {id:'t2j',name:'Desmontar hélice starboard',qty:false},
+    {id:'t2k',name:'Desmontar bushings',qty:false},
+    {id:'t2l',name:'Desmontar eje portside',qty:false},
+    {id:'t2m',name:'Desmontar eje starboard',qty:false},
+    {id:'t2n',name:'Desmontar pata de gallina portside',qty:false},
+    {id:'t2o',name:'Desmontar pata de gallina starboard',qty:false},
+    {id:'t2p',name:'Crear plantilla para pata portside',qty:false},
+    {id:'t2q',name:'Crear plantilla para pata starboard',qty:false},
+  ]},
+  {id:'s3',name:'Costados',tasks:[
+    {id:'t3a',name:'Reparar',qty:false},{id:'t3b',name:'Rectificar',qty:false},
+    {id:'t3c',name:'Lijar',qty:false},{id:'t3d',name:'Aplicar primer',qty:true,unit:'capas'},
+    {id:'t3e',name:'Pintar',qty:false},{id:'t3f',name:'Lijar con grano',qty:false},
+    {id:'t3g',name:'Pulir',qty:false},{id:'t3h',name:'Brillar',qty:false},
+    {id:'t3i',name:'Reparar scratchers',qty:true,unit:'unidades'},
+  ]},
+  {id:'s4',name:'Línea de flotación',tasks:[
+    {id:'t4a',name:'Marcar línea de flotación',qty:false},
+    {id:'t4b',name:'Retocar línea',qty:false},
+    {id:'t4c',name:'Lijar línea',qty:false},
+  ]},
+  {id:'s5',name:'Pisos / Arenas',tasks:[
+    {id:'t5a',name:'Cubierta',qty:false},{id:'t5b',name:'Popa',qty:false},{id:'t5c',name:'Proa',qty:false}
+  ]},
+  {id:'s6',name:'Popa',tasks:[]},
+  {id:'s7',name:'Proa',tasks:[]},
+  {id:'s8',name:'Cubierta',tasks:[
+    {id:'t8a',name:'Bajar dingui',qty:false},{id:'t8b',name:'Reparar',qty:false},
+    {id:'t8c',name:'Rectificar',qty:false},{id:'t8d',name:'Marcar',qty:false},
+    {id:'t8e',name:'Lijar',qty:false},{id:'t8f',name:'Pintar',qty:false},
+  ]},
+  {id:'s9',name:'Metales',tasks:[]},
+  {id:'s10',name:'Piezas de electrólisis',tasks:[]},
+  {id:'s11',name:'Alquiler',tasks:[
+    {id:'t11a',name:'Máquina articulada',qty:true,unit:'días'},
+    {id:'t11b',name:'Andamios',qty:true,unit:'días'},
+  ]},
+];
+
+function buildSectionsV2() {
+  if (isOwner) document.getElementById('entrega-field').style.display = '';
+  const c = document.getElementById('sections-container-v2');
+  c.innerHTML = '';
+  SECTIONS.forEach(sec => {
+    const b = document.createElement('div');
+    b.className = 'acc-block';
+    if (sec.tasks.length === 0) {
+      b.innerHTML = `<div class="acc-header"><span class="acc-name">${sec.name}</span><span class="acc-count" style="font-style:italic">Próximamente</span></div>`;
+    } else {
+      const rows = sec.tasks.map(t => {
+        const qty = t.qty ? `<input type="number" style="width:48px;margin-left:6px;border:1px solid var(--border);border-radius:4px;padding:2px 4px;font-size:11px" min="1" placeholder="0"> <span style="font-size:10px;color:var(--hint)">${t.unit}</span>` : '';
+        return `<div class="acc-row"><div class="task-cb" onclick="togTask(this)"></div><span class="task-name">${t.name}</span>${qty}</div>`;
+      }).join('');
+      b.innerHTML = `<div class="acc-header" onclick="toggleSectionV2('${sec.id}')"><span class="acc-name">${sec.name}</span><div style="display:flex;align-items:center;gap:8px"><span class="acc-count" id="acount-${sec.id}">0 tareas</span><span class="acc-chev" id="achev-${sec.id}">▼</span></div></div><div class="acc-list" id="alist-${sec.id}">${rows}</div>`;
+    }
+    c.appendChild(b);
+  });
+}
+
+function toggleSectionV2(id) {
+  document.getElementById('alist-'+id).classList.toggle('open');
+  document.getElementById('achev-'+id).classList.toggle('open');
+}
+
+window.addEventListener('load', buildSectionsV2);
 
 function setLang(l) {
   lang = l;
