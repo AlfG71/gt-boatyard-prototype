@@ -641,6 +641,37 @@
         color: var(--muted);
         opacity: 0.6;
       }
+      .sbtn-done {
+        flex-shrink: 0;
+        padding: 0.22rem 0.6rem;
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font-family: "DM Mono", monospace;
+        font-size: 0.52rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .sbtn-done:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .sbtn-done.done {
+        border-color: transparent;
+        color: var(--muted);
+        opacity: 0.45;
+        cursor: default;
+        pointer-events: none;
+      }
+      .stxt.done-txt {
+        text-decoration: line-through;
+        color: var(--muted);
+        opacity: 0.6;
+      }
 
       /* actions */
       .jcard-act {
@@ -1636,7 +1667,12 @@
               dt = "●";
               tc = "cur";
             }
-            return `<div class="step-row"><div class="sdot ${dc}">${dt}</div><div class="stxt ${tc}">${s.name}</div><div class="stime">${tt}</div></div>`;
+            const btnHtml = s.done
+              ? `<span class="sbtn-done done">Completado ✓</span>`
+              : `<button class="sbtn-done" onclick="markStepDone('${b.id}',${i})">Marcar completado</button>`;
+            const nameCls = s.done ? tc + ' done-txt' : tc;
+            const dotTxt = s.done ? '✓' : s.cur ? '●' : '';
+            return `<div class="step-row"><div class="sdot ${dc}">${dotTxt}</div><div class="stxt ${nameCls}">${s.name}</div><div class="stime">${tt}</div>${btnHtml}</div>`;
           })
           .join("");
 
@@ -1723,6 +1759,19 @@
         toast(`${b.name}: ${msg}`);
       }
 
+      // ── MARK STEP DONE ──
+      function markStepDone(boatId, stepIdx) {
+        const b = BOATS.find((x) => x.id === boatId);
+        if (!b || b.steps[stepIdx].done) return;
+        const now = new Date().toLocaleTimeString("es-PR", { hour: "2-digit", minute: "2-digit" });
+        b.steps[stepIdx].done = true;
+        b.steps[stepIdx].cur = false;
+        b.steps[stepIdx].time = now;
+        const nextPending = b.steps.find((s, i) => i > stepIdx && !s.done && !s.cur);
+        if (nextPending && !b.steps.some((s) => s.cur)) nextPending.cur = true;
+        showOwner();
+      }
+
       // ── CUSTOMER VIEW ──
       function renderClient(bid) {
         const b = BOATS.find((x) => x.id === bid);
@@ -1750,7 +1799,8 @@
               tc = "cur";
               tl = "En proceso";
             }
-            return `<div class="cstep"><div class="cdot ${dc}">${dt}</div><div><div class="csname ${nc}">${s.name}</div><div class="cstime ${tc}">${tl}</div></div></div>`;
+            const cdotTxt = s.done ? '✓' : s.cur ? '●' : '';
+            return `<div class="cstep"><div class="cdot ${dc}">${cdotTxt}</div><div><div class="csname ${nc}">${s.name}</div><div class="cstime ${tc}">${tl}</div></div></div>`;
           })
           .join("");
 
