@@ -1197,10 +1197,10 @@
       @media (max-width: 768px) {
         .brand-sub { display: none !important; }
         .brand-name { font-size: 1rem; }
-        /* make nav scrollable on small screens */
-        .topnav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        /* make nav-pills scrollable on small screens */
+        .topnav { flex-wrap: nowrap; }
         .brand { flex-shrink: 0; min-width: 0; }
-        .nav-pills { flex-shrink: 0; flex-wrap: nowrap; min-width: max-content; }
+        .nav-pills { flex-shrink: 0; flex-wrap: nowrap; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .pill { padding: 4px 6px; font-size: 0.55rem; letter-spacing: 0.04em; white-space: nowrap; }
       }
 
