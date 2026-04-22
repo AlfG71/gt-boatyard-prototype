@@ -1195,9 +1195,11 @@
 
       @media (max-width: 768px) {
         .brand-sub { display: none !important; }
-        .topnav { flex-wrap: nowrap; }
+        .brand-name { font-size: 1rem; }
+        /* make nav scrollable on small screens */
+        .topnav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .brand { flex-shrink: 0; min-width: 0; }
-        .nav-pills { flex-shrink: 0; flex-wrap: nowrap; }
+        .nav-pills { flex-shrink: 0; flex-wrap: nowrap; min-width: max-content; }
         .pill { padding: 4px 6px; font-size: 0.55rem; letter-spacing: 0.04em; white-space: nowrap; }
       }
 
